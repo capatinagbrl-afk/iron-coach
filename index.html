@@ -2572,7 +2572,9 @@ function WorkoutScreen({ onNavigate, program, onSessionComplete, currentDayIdx=0
   // Because WorkoutScreen is always mounted (display:none when inactive),
   // the useState initialiser only runs once — this effect keeps exercises
   // in sync when a new program is generated or the day advances.
-  const todayDayId = todayDay ? `${currentDayIdx}-${todayDay.focus}` : null;
+  // Include exercise IDs in the key so custom exercise changes also trigger a sync.
+  const todayExKey = todayDay?.exercises?.map(e=>e.id).join(',') || '';
+  const todayDayId = todayDay ? `${currentDayIdx}-${todayDay.focus}-${todayExKey}` : null;
   React.useEffect(()=>{
     if(todayDay?.exercises?.length){
       setExercises(todayDay.exercises);
@@ -3607,8 +3609,8 @@ function MesoBuilder({ onNavigate, onSaveProgram, user, prefs }){
             })}
           </Card>
           <div style={{display:"flex",gap:8}}>
-            <Btn style={{flex:1}} onClick={()=>{onSaveProgram(program);onNavigate("workout");}}>Start Week 1 →</Btn>
-            <Btn variant="ghost" style={{flex:1}} onClick={()=>{onSaveProgram(program);onNavigate("dashboard");}}>Save</Btn>
+            <Btn style={{flex:1}} onClick={async ()=>{await onSaveProgram(program);onNavigate("workout");}}>Start Week 1 →</Btn>
+            <Btn variant="ghost" style={{flex:1}} onClick={async ()=>{await onSaveProgram(program);onNavigate("dashboard");}}>Save</Btn>
           </div>
         </div>
       )}
@@ -10843,11 +10845,15 @@ function App(){
           if(ex){
             const {error:ue}=await sb.from("programs").update(pr).eq("id",ex.id);
             saveErr=ue;
+            console.log("MesoBuilder UPDATE id=",ex.id,"error=",ue?.message||"OK");
           } else {
             const {error:ie}=await sb.from("programs").insert(pr);
             saveErr=ie;
+            console.log("MesoBuilder INSERT error=",ie?.message||"OK");
           }
-          console.log("MesoBuilder save result:", saveErr?.message||"OK");
+          if(saveErr) console.error("Save failed:", saveErr);
+        } else {
+          console.warn("MesoBuilder save: no user in ref — Supabase save skipped");
         }
       }} user={user} prefs={prefs}/>),
     analytics: gated("analytics","Advanced Analytics",<Analytics sessions={sessions} prefs={prefs} completedMesos={completedMesos} muscleState={muscleState} muscleFatigue={applyDecaySinceLastSession(muscleFatigue,lastFatigueTs,user?.exp||"Intermediate")} muscleStateHistory={muscleStateHistory||[]} complianceHistory={complianceHistory||[]} program={program} exp={user?.exp||"Intermediate"}/>),
