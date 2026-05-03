@@ -2805,153 +2805,6 @@ function WorkoutScreen({ onNavigate, program, onSessionComplete, currentDayIdx=0
       </div>
     );
   }
-      <div style={{animation:"slideUp 0.45s cubic-bezier(0.22,1,0.36,1) both",
-        display:"flex",flexDirection:"column",minHeight:0}}>
-        {/* Header */}
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <div>
-            <div style={{fontSize:17,fontWeight:800}}>Add exercises</div>
-            {pendingAdds.length>0&&(
-              <div style={{fontSize:11,color:T.accent,marginTop:1}}>
-                {pendingAdds.length} selected
-              </div>
-            )}
-          </div>
-          <Btn variant="ghost" style={{padding:"5px 11px",fontSize:11}}
-            onClick={()=>{ setShowAdd(false); setPendingAdds([]); }}>
-            ✕ Cancel
-          </Btn>
-        </div>
-
-        {/* Pending adds — chips strip */}
-        {pendingAdds.length>0&&(
-          <div style={{display:"flex",gap:5,marginBottom:10,overflowX:"auto",paddingBottom:2}}>
-            {pendingAdds.map(ex=>(
-              <div key={ex.id} style={{
-                display:"flex",alignItems:"center",gap:5,
-                flexShrink:0,padding:"4px 8px 4px 10px",
-                borderRadius:20,
-                background:`${T.accent}18`,
-                border:`1px solid ${T.accent}40`,
-                fontSize:10,fontWeight:700,color:T.accent,
-              }}>
-                {ex.name}
-                <button onClick={()=>setPendingAdds(p=>p.filter(e=>e.id!==ex.id))}
-                  style={{background:"none",border:"none",color:T.accent,
-                    cursor:"pointer",fontSize:12,lineHeight:1,padding:0}}>×</button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Search */}
-        <div style={{position:"relative",marginBottom:8}}>
-          <label htmlFor="add-exercise-search" style={{display:"none"}}>Search exercises</label>
-          <input id="add-exercise-search" value={addSearch}
-            onChange={e=>setAddSearch(e.target.value)}
-            placeholder="Search exercises…" autoFocus
-            style={{width:"100%",padding:"9px 12px 9px 32px",borderRadius:12,
-              border:`1px solid ${T.border}`,background:T.bgInput,
-              color:T.textPri,fontSize:13,fontFamily:"inherit",outline:"none"}}/>
-          <span aria-hidden="true" style={{position:"absolute",left:10,top:"50%",
-            transform:"translateY(-50%)",color:T.textTer,fontSize:11,
-            fontFamily:"'SF Mono','Menlo',monospace",fontWeight:700}}>⌕</span>
-        </div>
-
-        {/* Muscle group filter chips — persistent */}
-        <div style={{display:"flex",gap:5,marginBottom:8,overflowX:"auto",paddingBottom:3}}>
-          {groups.map(g=>(
-            <button key={g} onClick={()=>setAddFilter(g)} style={{
-              flexShrink:0,padding:"5px 10px",borderRadius:16,
-              border:`1px solid ${addFilter===g?T.accent:T.border}`,
-              background:addFilter===g?`${T.accent}18`:T.bgRaise,
-              color:addFilter===g?T.accent:T.textSec,
-              fontSize:10,fontWeight:700,cursor:"pointer",
-              fontFamily:"inherit",textTransform:"capitalize",
-            }}>{g}</button>
-          ))}
-        </div>
-
-        {/* Count */}
-        <div style={{fontSize:11,color:T.textTer,marginBottom:6,
-          fontFamily:"'SF Mono','Menlo',monospace"}}>
-          {filtered.length} exercise{filtered.length!==1?"s":""}
-          {addFilter!=="all"?` · ${addFilter}`:""}
-        </div>
-
-        {/* Exercise list */}
-        <div style={{display:"flex",flexDirection:"column",gap:6,
-          flex:1,overflowY:"auto",maxHeight:260,marginBottom:12}}>
-          {filtered.map(ex=>{
-            const isPending=pendingAdds.find(e=>e.id===ex.id);
-            return(
-              <div key={ex.id}
-                onClick={()=>setPendingAdds(p=>
-                  isPending ? p.filter(e=>e.id!==ex.id) : [...p,ex]
-                )}
-                style={{display:"flex",alignItems:"center",gap:10,
-                  background:isPending?`${T.accent}10`:T.bgCard,
-                  border:`1px solid ${isPending?T.accent:T.border}`,
-                  borderRadius:12,padding:"9px 11px",cursor:"pointer",
-                  transition:"all 0.15s"}}>
-                <div style={{width:32,height:32,borderRadius:8,
-                  background:T.bgRaise,border:`1px solid ${T.border}`,
-                  display:"flex",alignItems:"center",justifyContent:"center",
-                  flexShrink:0}}>
-                  <span style={{fontSize:10,fontWeight:700,
-                    fontFamily:"'SF Mono','Menlo',monospace",color:T.textSec}}>
-                    {equipLabel[ex.equip]||"—"}
-                  </span>
-                </div>
-                <div style={{flex:1}}>
-                  <div style={{fontSize:12,fontWeight:700,
-                    color:isPending?T.accent:T.textPri}}>{ex.name}</div>
-                  <div style={{fontSize:10,color:T.textSec,textTransform:"capitalize"}}>
-                    {ex.muscleGroup} · {ex.equip} · {ex.reps} reps
-                  </div>
-                </div>
-                <div style={{
-                  width:22,height:22,borderRadius:7,flexShrink:0,
-                  border:`2px solid ${isPending?T.accent:T.border}`,
-                  background:isPending?T.accent:"transparent",
-                  display:"flex",alignItems:"center",justifyContent:"center",
-                  fontSize:12,color:"#000",fontWeight:800,
-                  transition:"all 0.15s",
-                }}>
-                  {isPending?"✓":""}
-                </div>
-              </div>
-            );
-          })}
-          {filtered.length===0&&(
-            <div style={{textAlign:"center",color:T.textTer,padding:28,fontSize:13}}>
-              No exercises found{addFilter!=="all"?` in ${addFilter}`:""}
-            </div>
-          )}
-        </div>
-
-        {/* Confirm button — always visible */}
-        <Btn
-          style={{
-            width:"100%",
-            background:pendingAdds.length>0?T.accent:T.bgRaise,
-            color:pendingAdds.length>0?"#000":T.textTer,
-            fontWeight:800,fontSize:14,
-          }}
-          disabled={pendingAdds.length===0}
-          onClick={()=>{
-            pendingAdds.forEach(ex=>addEx(ex));
-            setShowAdd(false);
-            setPendingAdds([]);
-            // Keep filter/search so user can re-open and continue where they left off
-          }}>
-          {pendingAdds.length>0
-            ? `Add ${pendingAdds.length} exercise${pendingAdds.length!==1?"s":""} →`
-            : "Select exercises to add"}
-        </Btn>
-      </div>
-    );
-  }
 
   // Finish summary
   if(showFinish){
@@ -10391,6 +10244,11 @@ function loadState(){
 }
 
 function App(){
+  // Hide loading screen after React mounts — prevents black screen on slow Babel compile
+  React.useEffect(()=>{
+    if(window._hideLoading) window._hideLoading();
+  },[]);
+
   // ── Hydrate from localStorage on mount ──
   const saved = loadState();
 
@@ -10749,13 +10607,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
   </script>
 
   <script>
-    // Hide loading screen once Babel finishes
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(function() {
-        var l = document.getElementById('loading');
-        if(l) { l.style.opacity = '0'; setTimeout(function(){ l.style.display='none'; }, 300); }
-      }, 500);
-    });
+    // Loading screen is hidden by the App component after React mounts
+    // This prevents the black screen caused by timer firing before Babel compiles
+    window._hideLoading = function() {
+      var l = document.getElementById('loading');
+      if(l){ l.style.opacity='0'; setTimeout(function(){ l.style.display='none'; },300); }
+    };
   </script>
 </body>
 </html>
