@@ -5894,45 +5894,7 @@ function AdaptationPanel({ sessions=[], program, muscleState, muscleFatigue={}, 
                   </span>
                 </div>
 
-                {/* Remove client button — tap once to reveal confirm, tap again to remove */}
-                <div style={{marginTop:8,display:"flex",justifyContent:"flex-end"}}
-                  onClick={e=>e.stopPropagation()}>
-                  {confirmRemove===client.clientId?(
-                    <div style={{display:"flex",gap:6,alignItems:"center"}}>
-                      <span style={{fontSize:11,color:T.textSec}}>Remove from roster?</span>
-                      <button
-                        onClick={()=>setConfirmRemove(null)}
-                        style={{fontSize:11,fontWeight:700,padding:"4px 10px",
-                          borderRadius:7,border:`1px solid ${T.border}`,
-                          background:"none",color:T.textSec,cursor:"pointer",
-                          fontFamily:"inherit"}}>
-                        Cancel
-                      </button>
-                      <button
-                        disabled={removing}
-                        onClick={async()=>{
-                          setRemoving(true);
-                          await onRemoveClient(client.clientId);
-                          setConfirmRemove(null);
-                          setRemoving(false);
-                        }}
-                        style={{fontSize:11,fontWeight:700,padding:"4px 10px",
-                          borderRadius:7,border:`1px solid ${T.red}40`,
-                          background:`${T.red}12`,color:T.red,cursor:"pointer",
-                          fontFamily:"inherit"}}>
-                        {removing?"Removing…":"Yes, remove"}
-                      </button>
-                    </div>
-                  ):(
-                    <button
-                      onClick={()=>setConfirmRemove(client.clientId)}
-                      style={{fontSize:11,color:T.textTer,background:"none",
-                        border:"none",cursor:"pointer",fontFamily:"inherit",
-                        padding:"4px 0",fontWeight:500}}>
-                      Remove client
-                    </button>
-                  )}
-                </div>
+
               </Card>
             );
           })}
@@ -7660,6 +7622,43 @@ function CoachClients({ coach, onClientSelect, onAddClient, onRemoveClient, clie
                       </div>
                     )}
                   </div>
+                </div>
+                {/* Remove client — two-tap confirm */}
+                <div style={{marginTop:8,display:"flex",justifyContent:"flex-end"}}
+                  onClick={e=>e.stopPropagation()}>
+                  {confirmRemove===client.clientId?(
+                    <div style={{display:"flex",gap:6,alignItems:"center"}}>
+                      <span style={{fontSize:11,color:T.textSec}}>Remove from roster?</span>
+                      <button onClick={()=>setConfirmRemove(null)}
+                        style={{fontSize:11,fontWeight:700,padding:"4px 10px",
+                          borderRadius:7,border:`1px solid ${T.border}`,
+                          background:"none",color:T.textSec,cursor:"pointer",
+                          fontFamily:"inherit"}}>
+                        Cancel
+                      </button>
+                      <button
+                        disabled={removing}
+                        onClick={async()=>{
+                          setRemoving(true);
+                          await onRemoveClient(client.clientId);
+                          setConfirmRemove(null);
+                          setRemoving(false);
+                        }}
+                        style={{fontSize:11,fontWeight:700,padding:"4px 10px",
+                          borderRadius:7,border:`1px solid ${T.red}40`,
+                          background:`${T.red}12`,color:T.red,cursor:"pointer",
+                          fontFamily:"inherit"}}>
+                        {removing?"Removing…":"Yes, remove"}
+                      </button>
+                    </div>
+                  ):(
+                    <button onClick={()=>setConfirmRemove(client.clientId)}
+                      style={{fontSize:11,color:T.textTer,background:"none",
+                        border:"none",cursor:"pointer",fontFamily:"inherit",
+                        padding:"4px 0",fontWeight:500}}>
+                      Remove client
+                    </button>
+                  )}
                 </div>
               </Card>
             );
