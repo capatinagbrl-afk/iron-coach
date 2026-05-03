@@ -10347,7 +10347,9 @@ function App(){
   // ── Hydrate from localStorage on mount ──
   const saved = loadState();
 
-  const [user,        setUser]        = useState(saved?.user        ?? null);
+  const [user,        setUser]        = useState(saved?.user
+  // userRef always holds the current user — used in callbacks that close over stale state
+  const userRef = useRef(saved?.user ?? null);        ?? null);
   const [screen,      setScreen]      = useState("dashboard");
   const [program,     setProgram]     = useState(saved?.program     ?? null);
   const [sessions,    setSessions]    = useState(saved?.sessions    ?? []);
@@ -10438,6 +10440,7 @@ function App(){
 
   function handleAuth(userData){
     setUser(userData);
+    userRef.current = userData; // keep ref in sync for stale closure access
     setProgram(userData.program || null);
     setSessions(userData.sessions || []);
     setMuscleFatigue(userData.muscleFatigue || {});
@@ -10500,6 +10503,7 @@ function App(){
 
   async function handleLogout(){
     await sbSignOut();
+    userRef.current = null;
     setUser(null);
     setProgram(null);
     setSessions([]);
@@ -10575,21 +10579,22 @@ function App(){
     dashboard: <Dashboard onNavigate={setScreen} user={user} program={program} sessions={sessions} currentDayIdx={currentDayIdx} prefs={prefs} onPrefsChange={setPrefs} onProgramReady={async p=>{
         setProgram(p);
         setCurrentDayIdx(0);
-        if(user?.id){
+        if(userRef.current?.id){
+          const currentUser = userRef.current;
           // Find existing self-created program (not a coach-assigned one)
           const { data:ex } = await sb.from("programs")
             .select("id")
-            .eq("owner_id", user.id)
+            .eq("owner_id", currentUser.id)
             .eq("is_template", false)
             .is("assigned_by_coach", null)  // only self-created
             .limit(1).maybeSingle();
           const pr={
-            owner_id:user.id, name:p.name, goal:p.goal, weeks:p.weeks,
+            owner_id:currentUser.id, name:p.name, goal:p.goal, weeks:p.weeks,
             freq:p.freq, current_week:p.currentWeek||1, current_day:0,
             days:p.days, is_template:false, assigned_by_coach:null,
             assignment_status:"accepted",
           };
-          console.log("onProgramReady: user.id=", user.id, "existing=", ex?.id||"none", "days=", p.days?.length);
+          console.log("onProgramReady: user.id=", currentUser.id, "existing=", ex?.id||"none", "days=", p.days?.length);
           if(ex){
             const { error:ue } = await sb.from("programs").update(pr).eq("id",ex.id);
             console.log("onProgramReady: UPDATE result error=", ue?.message||"none");
@@ -10597,6 +10602,8 @@ function App(){
             const { error:ie } = await sb.from("programs").insert(pr);
             console.log("onProgramReady: INSERT result error=", ie?.message||"none");
           }
+        } else {
+          console.log("onProgramReady: no user in ref — skipping Supabase save");
         }
         if(!onboardingDone && user?.role==="athlete"){
           setOnboardStep(0);
