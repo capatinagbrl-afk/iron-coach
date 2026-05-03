@@ -5426,7 +5426,6 @@ function AdaptationPanel({ sessions=[], program, muscleState, muscleFatigue={}, 
         .select("text, created_at")
         .eq("athlete_id", user.id)
         .order("created_at", { ascending: true });
-      console.log("fetchNotes: got", data?.length, "notes, error:", notesErr?.message||"none");
       if(!data || data.length === 0) return;
       const fresh = data.map(n=>({ text:n.text, ts:new Date(n.created_at).getTime(), coachName:"Your coach" }));
       setCoachNotes(prev=>{
@@ -5568,6 +5567,61 @@ function AdaptationPanel({ sessions=[], program, muscleState, muscleFatigue={}, 
           <div style={{fontSize:22,fontWeight:800}}>Adaptation Engine</div>
           <div style={{fontSize:13,color:T.textSec,marginTop:4}}>Per-muscle auto-regulation · Volume · Stimulus</div>
         </div>
+
+        {/* Coach notes — show even before first session */}
+        {hasCoachNotes&&(
+          <div style={{marginBottom:14}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <div style={{display:"flex",alignItems:"center",gap:7}}>
+                <div style={{fontSize:10,fontWeight:700,color:T.teal,textTransform:"uppercase",
+                  letterSpacing:"0.1em"}}>From your coach</div>
+                {unreadNotes.length>0&&(
+                  <div style={{fontSize:10,fontWeight:800,color:"#000",
+                    background:T.teal,borderRadius:12,padding:"1px 6px",
+                    minWidth:16,textAlign:"center"}}>
+                    {unreadNotes.length}
+                  </div>
+                )}
+              </div>
+              {unreadNotes.length>0&&(
+                <button onClick={markAllRead} style={{background:"none",border:"none",
+                  color:T.textTer,fontSize:11,cursor:"pointer",padding:"2px 6px"}}>
+                  Mark all read
+                </button>
+              )}
+            </div>
+            {coachNotes.slice().reverse().map((note,i)=>{
+              const isUnread=!readNoteIds.includes(note.ts);
+              const date=new Date(note.ts).toLocaleDateString("en-GB",{
+                day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+              return(
+                <div key={note.ts} onClick={()=>isUnread&&markRead(note.ts)}
+                  style={{background:isUnread?`${T.teal}12`:T.bgCard,
+                    border:`1px solid ${isUnread?T.teal+"50":T.border}`,
+                    borderLeft:`3px solid ${isUnread?T.teal:T.border}`,
+                    borderRadius:12,padding:"11px 13px",marginBottom:7,
+                    cursor:isUnread?"pointer":"default"}}>
+                  <div style={{display:"flex",justifyContent:"space-between",
+                    alignItems:"flex-start",marginBottom:6}}>
+                    <span style={{fontSize:11,fontWeight:700,
+                      color:isUnread?T.teal:T.textSec}}>
+                      {note.coachName||"Your coach"}
+                    </span>
+                    <div style={{display:"flex",alignItems:"center",gap:6}}>
+                      {isUnread&&<div style={{width:6,height:6,borderRadius:"50%",
+                        background:T.teal,flexShrink:0}}/>}
+                      <span style={{fontSize:10,color:T.textTer}}>{date}</span>
+                    </div>
+                  </div>
+                  <div style={{fontSize:12,color:T.textSec,lineHeight:1.55}}>
+                    {note.text}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         <Card style={{textAlign:"center",padding:"40px 20px",border:`1px solid ${T.border}`}}>
           <div style={{fontSize:36,marginBottom:12,opacity:0.3}}>⚡</div>
           <div style={{fontSize:14,fontWeight:600,color:T.textSec,marginBottom:8}}>No session data yet</div>
@@ -9580,7 +9634,6 @@ async function saveCoachNote(coachId, athleteClientId, text, coachName){
     pushToast("Couldn't find athlete — note not sent.", "error");
     return false;
   }
-  console.log("saveCoachNote: inserting for athlete", athlete.id, "coach", coachId);
   const { error } = await sb.from("coach_notes").insert({
     coach_id:   coachId,
     athlete_id: athlete.id,
