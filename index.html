@@ -1515,10 +1515,10 @@ function AuthScreen({ onAuth }){
       let coachNotes = [];
       if(profile.role === "athlete"){
         const { data: notesData } = await sb.from("coach_notes")
-          .select("text, created_at, profiles(name)")
+          .select("text, created_at")
           .eq("athlete_id", authUser.id)
           .order("created_at", { ascending: true });
-        coachNotes = (notesData||[]).map(n=>({ text:n.text, ts:new Date(n.created_at).getTime(), coachName:n.profiles?.name||"Your coach" }));
+        coachNotes = (notesData||[]).map(n=>({ text:n.text, ts:new Date(n.created_at).getTime(), coachName:"Your coach" }));
       }
 
       const userData = {
@@ -5422,13 +5422,13 @@ function AdaptationPanel({ sessions=[], program, muscleState, muscleFatigue={}, 
   React.useEffect(()=>{
     if(!user?.id) return;
     async function fetchNotes(){
-      const { data } = await sb.from("coach_notes")
-        .select("text,created_at,profiles(name)")
+      const { data, error: notesErr } = await sb.from("coach_notes")
+        .select("text, created_at")
         .eq("athlete_id", user.id)
         .order("created_at", { ascending: true });
-      console.log("fetchNotes: got", data?.length, "notes for athlete", user.id);
-      if(!data) return;
-      const fresh = data.map(n=>({ text:n.text, ts:new Date(n.created_at).getTime(), coachName:n.profiles?.name||"Your coach" }));
+      console.log("fetchNotes: got", data?.length, "notes, error:", notesErr?.message||"none");
+      if(!data || data.length === 0) return;
+      const fresh = data.map(n=>({ text:n.text, ts:new Date(n.created_at).getTime(), coachName:"Your coach" }));
       setCoachNotes(prev=>{
         if(prev.length===fresh.length && JSON.stringify(prev)===JSON.stringify(fresh)) return prev;
         return fresh;
