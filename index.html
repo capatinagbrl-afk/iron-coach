@@ -10347,9 +10347,9 @@ function App(){
   // ── Hydrate from localStorage on mount ──
   const saved = loadState();
 
-  const [user,        setUser]        = useState(saved?.user
+  const [user,        setUser]        = useState(saved?.user        ?? null);
   // userRef always holds the current user — used in callbacks that close over stale state
-  const userRef = useRef(saved?.user ?? null);        ?? null);
+  const userRef = useRef(saved?.user ?? null);
   const [screen,      setScreen]      = useState("dashboard");
   const [program,     setProgram]     = useState(saved?.program     ?? null);
   const [sessions,    setSessions]    = useState(saved?.sessions    ?? []);
