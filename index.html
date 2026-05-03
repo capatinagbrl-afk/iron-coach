@@ -5893,6 +5893,46 @@ function AdaptationPanel({ sessions=[], program, muscleState, muscleFatigue={}, 
                     {r.stimulus.toFixed(1)}
                   </span>
                 </div>
+
+                {/* Remove client button — tap once to reveal confirm, tap again to remove */}
+                <div style={{marginTop:8,display:"flex",justifyContent:"flex-end"}}
+                  onClick={e=>e.stopPropagation()}>
+                  {confirmRemove===client.clientId?(
+                    <div style={{display:"flex",gap:6,alignItems:"center"}}>
+                      <span style={{fontSize:11,color:T.textSec}}>Remove from roster?</span>
+                      <button
+                        onClick={()=>setConfirmRemove(null)}
+                        style={{fontSize:11,fontWeight:700,padding:"4px 10px",
+                          borderRadius:7,border:`1px solid ${T.border}`,
+                          background:"none",color:T.textSec,cursor:"pointer",
+                          fontFamily:"inherit"}}>
+                        Cancel
+                      </button>
+                      <button
+                        disabled={removing}
+                        onClick={async()=>{
+                          setRemoving(true);
+                          await onRemoveClient(client.clientId);
+                          setConfirmRemove(null);
+                          setRemoving(false);
+                        }}
+                        style={{fontSize:11,fontWeight:700,padding:"4px 10px",
+                          borderRadius:7,border:`1px solid ${T.red}40`,
+                          background:`${T.red}12`,color:T.red,cursor:"pointer",
+                          fontFamily:"inherit"}}>
+                        {removing?"Removing…":"Yes, remove"}
+                      </button>
+                    </div>
+                  ):(
+                    <button
+                      onClick={()=>setConfirmRemove(client.clientId)}
+                      style={{fontSize:11,color:T.textTer,background:"none",
+                        border:"none",cursor:"pointer",fontFamily:"inherit",
+                        padding:"4px 0",fontWeight:500}}>
+                      Remove client
+                    </button>
+                  )}
+                </div>
               </Card>
             );
           })}
@@ -7294,7 +7334,7 @@ function CoachClientDetail({ client, onBack, onSendNote, coachNotes=[], appliedS
   );
 }
 // ── Coach Clients screen ──
-function CoachClients({ coach, onClientSelect, onAddClient, clients=[] }){
+function CoachClients({ coach, onClientSelect, onAddClient, onRemoveClient, clients=[] }){
   const [addId,setAddId]=useState("");
   const [addError,setAddError]=useState("");
   const [addSuccess,setAddSuccess]=useState("");
@@ -7303,6 +7343,8 @@ function CoachClients({ coach, onClientSelect, onAddClient, clients=[] }){
   const [filterStatus,setFilterStatus]=useState("all");
   const [search,setSearch]=useState("");
   const [showSearch,setShowSearch]=useState(false);
+  const [confirmRemove,setConfirmRemove]=useState(null); // clientId pending removal
+  const [removing,setRemoving]=useState(false);
 
   async function addClient(){
     if(!addId.trim()){setAddError("Enter a Client ID.");return;}
@@ -8972,9 +9014,20 @@ function CoachApp({ coach, onLogout, onDeleteAccount, theme="dark", prefs={}, on
       pushToast(result.error, "error");
       return false;
     }
-    // Refresh client list
     const updated = await fetchCoachClients(coach?.id);
     setClients(updated);
+    return true;
+  }
+
+  async function handleRemoveClient(clientId){
+    const result = await removeCoachClient(coach?.id, clientId);
+    if(!result.ok){
+      pushToast(result.error, "error");
+      return false;
+    }
+    // Remove from local state immediately
+    setClients(prev=>prev.filter(c=>c.clientId!==clientId));
+    pushToast("Client removed from your roster.", "success");
     return true;
   }
 
@@ -9071,7 +9124,7 @@ function CoachApp({ coach, onLogout, onDeleteAccount, theme="dark", prefs={}, on
               }))}
             />
           ):screen==="clients"?(
-            <CoachClients coach={coach} onClientSelect={c=>setSelectedClient(c)} onAddClient={handleAddClient} clients={clients}/>
+            <CoachClients coach={coach} onClientSelect={c=>setSelectedClient(c)} onAddClient={handleAddClient} onRemoveClient={handleRemoveClient} clients={clients}/>
           ):screen==="programs"?(
             <CoachPrograms clients={clients} assigned={assigned} onAssignChange={setAssigned} templates={templates} onTemplatesChange={setTemplates} coachId={coach?.id}/>
           ):screen==="notes"?(
@@ -9660,6 +9713,20 @@ async function loadCoachTemplates(coachId){
     split: r.days || [],
     desc:  r.description || "",
   }));
+}
+
+// removeCoachClient: unlink a coach from an athlete
+async function removeCoachClient(coachId, athleteClientId){
+  // Resolve athlete UUID
+  const { data: athlete } = await sb.from("profiles")
+    .select("id").eq("client_id", athleteClientId).maybeSingle();
+  if(!athlete) return { ok:false, error:"Athlete not found." };
+  const { error } = await sb.from("coach_clients")
+    .delete()
+    .eq("coach_id", coachId)
+    .eq("athlete_id", athlete.id);
+  if(error) return { ok:false, error: error.message };
+  return { ok:true };
 }
 
 // addCoachClient: link a coach to an athlete via client_id
