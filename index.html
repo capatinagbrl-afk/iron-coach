@@ -2707,7 +2707,8 @@ function WorkoutScreen({ onNavigate, program, onSessionComplete, currentDayIdx=0
     setTimeout(()=>setRestJustDone(false),800);
     if(setNum<setsPerEx){setSetNum(s=>s+1);setPhase("active");}
     else if(exIdx<exercises.length-1){setExIdx(i=>i+1);setSetNum(1);setPhase("active");}
-    else setPhase("do  }
+    else setPhase("done");
+  }
   function handleUndo(){
     if(loggedSets.length===0)return;
     setLoggedSets(p=>p.slice(0,-1));
