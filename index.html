@@ -9609,6 +9609,7 @@ async function lookupClient(clientId){
 
 // Map a Supabase session row back to the app's session shape
 function mapSession(row){
+  const ts = new Date(row.completed_at).getTime();
   return {
     id:          row.id,
     dayIdx:      row.day_idx,
@@ -9618,7 +9619,10 @@ function mapSession(row){
     soreness:    row.soreness,
     rpe:         row.rpe,
     completedAt: row.completed_at,
-    ts:          new Date(row.completed_at).getTime(),
+    ts,
+    timestamp:   ts,   // alias used by history/analytics components
+  };
+} Date(row.completed_at).getTime(),
   };
 }
 
