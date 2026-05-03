@@ -1561,11 +1561,9 @@ function AuthScreen({ onAuth }){
     setError("");setLoading(true);
     try{
       const authUser = await sbSignIn(email, password);
-      console.log("doLogin: signed in as", authUser.id);
       // Fetch their profile
       const { data: profile, error: profileError } = await sb.from("profiles")
         .select("*").eq("id", authUser.id).single();
-      console.log("doLogin: profile =", profile, "error =", profileError);
       if(profileError) throw new Error("Profile error: " + profileError.message + " (code: " + profileError.code + ")");
       if(!profile) throw new Error("No profile row found for this account. The signup may have failed to save your profile — try signing up again.");
 
@@ -1601,8 +1599,6 @@ function AuthScreen({ onAuth }){
            r.assignment_status === undefined)
         ) || null;
 
-        console.log("doLogin: progRows=", progRows?.length, "picked=", progData?.name||"none");
-        if(progData) progData.days?.forEach((d,i)=>console.log("  day",i,"exercises:", d.exercises?.map(e=>e?.name)));
 
         if(progData) program = {
           name:        progData.name,
@@ -2711,8 +2707,7 @@ function WorkoutScreen({ onNavigate, program, onSessionComplete, currentDayIdx=0
     setTimeout(()=>setRestJustDone(false),800);
     if(setNum<setsPerEx){setSetNum(s=>s+1);setPhase("active");}
     else if(exIdx<exercises.length-1){setExIdx(i=>i+1);setSetNum(1);setPhase("active");}
-    else setPhase("done");
-  }
+    else setPhase("do  }
   function handleUndo(){
     if(loggedSets.length===0)return;
     setLoggedSets(p=>p.slice(0,-1));
@@ -9678,10 +9673,6 @@ async function sbGetSession(){
 // ── Profile helpers ─────────────────────────────────────────────────
 // registerUser: creates a profile row after Supabase auth signup
 async function registerUser(user){
-  console.log("registerUser: inserting profile for", user.id, user.role);
-  // Verify session is active before insert
-  const { data: { session } } = await sb.auth.getSession();
-  console.log("registerUser: session uid =", session?.user?.id || "NO SESSION");
   const { error } = await sb.from("profiles").insert({
     id:            user.id,
     role:          user.role,
@@ -9699,7 +9690,6 @@ async function registerUser(user){
     pushToast("Profile save failed: " + error.message, "error");
     return false;
   }
-  console.log("registerUser: success");
   return true;
 }
 
@@ -10808,16 +10798,13 @@ function App(){
             days:p.days, is_template:false, assigned_by_coach:null,
             assignment_status:"accepted",
           };
-          console.log("onProgramReady: user.id=", currentUser.id, "existing=", ex?.id||"none", "days=", p.days?.length);
+ne", "days=", p.days?.length);
           if(ex){
             const { error:ue } = await sb.from("programs").update(pr).eq("id",ex.id);
-            console.log("onProgramReady: UPDATE result error=", ue?.message||"none");
           } else {
             const { error:ie } = await sb.from("programs").insert(pr);
-            console.log("onProgramReady: INSERT result error=", ie?.message||"none");
           }
         } else {
-          console.log("onProgramReady: no user in ref — skipping Supabase save");
         }
         if(!onboardingDone && user?.role==="athlete"){
           setOnboardStep(0);
@@ -10829,8 +10816,6 @@ function App(){
         setProgram(p);
         setCurrentDayIdx(0);
         const cu = userRef.current;
-        console.log("MesoBuilder save: user=", cu?.id, "weeks=", p.weeks, "days=", p.days?.length);
-        p.days?.forEach((d,i)=>console.log("  day",i,"exercises:", d.exercises?.map(e=>e.name)));
         if(cu?.id){
           const {data:ex}=await sb.from("programs")
             .select("id").eq("owner_id",cu.id).eq("is_template",false)
@@ -10845,16 +10830,11 @@ function App(){
           if(ex){
             const {error:ue}=await sb.from("programs").update(pr).eq("id",ex.id);
             saveErr=ue;
-            console.log("MesoBuilder UPDATE id=",ex.id,"error=",ue?.message||"OK");
           } else {
             const {error:ie}=await sb.from("programs").insert(pr);
             saveErr=ie;
-            console.log("MesoBuilder INSERT error=",ie?.message||"OK");
           }
-          if(saveErr) console.error("Save failed:", saveErr);
-        } else {
-          console.warn("MesoBuilder save: no user in ref — Supabase save skipped");
-        }
+
       }} user={user} prefs={prefs}/>),
     analytics: gated("analytics","Advanced Analytics",<Analytics sessions={sessions} prefs={prefs} completedMesos={completedMesos} muscleState={muscleState} muscleFatigue={applyDecaySinceLastSession(muscleFatigue,lastFatigueTs,user?.exp||"Intermediate")} muscleStateHistory={muscleStateHistory||[]} complianceHistory={complianceHistory||[]} program={program} exp={user?.exp||"Intermediate"}/>),
     library:   <ExerciseLibrary/>,
