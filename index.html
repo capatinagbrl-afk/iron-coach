@@ -2217,7 +2217,7 @@ function Dashboard({ onNavigate, user, program, sessions=[], currentDayIdx=0, pr
         const DAY_MS=24*60*60*1000;
         const todayMidnight=new Date(); todayMidnight.setHours(0,0,0,0);
         const trainedDays=new Set(sessions.map(s=>
-          new Date(s.timestamp).toDateString()
+          new Date(s.timestamp||s.completedAt||s.ts).toDateString()
         ));
         let streak=0;
         let check=new Date(todayMidnight);
@@ -3652,7 +3652,7 @@ function buildPerformanceSeries(sessions, exerciseName, goal="Hypertrophy"){
       },{score:0,load:0,reps:0});
       return{
         timestamp:s.timestamp,
-        date:new Date(s.timestamp).toLocaleDateString("en-GB",{day:"numeric",month:"short"}),
+        date:new Date(s.timestamp||s.completedAt||s.ts).toLocaleDateString("en-GB",{day:"numeric",month:"short"}),
         score:best.score, load:best.load, reps:best.reps,
       };
     })
@@ -3674,7 +3674,7 @@ function buildFatigueSeries(muscleStateHistory, muscle){
 function buildVolumeSeries(sessions){
   const weeks={};
   sessions.forEach(s=>{
-    const d=new Date(s.timestamp);
+    const d=new Date(s.timestamp||s.completedAt||s.ts);
     const mon=new Date(d); mon.setDate(d.getDate()-d.getDay()+1);
     const key=mon.toLocaleDateString("en-GB",{day:"numeric",month:"short"});
     if(!weeks[key]) weeks[key]={};
@@ -3694,7 +3694,7 @@ function buildVolumePerformanceScatter(sessions, muscle, exerciseName, goal="Hyp
   return sessions
     .filter(s=>s.loggedSets?.some(ls=>ls.exercise===exerciseName))
     .map(s=>{
-      const d=new Date(s.timestamp);
+      const d=new Date(s.timestamp||s.completedAt||s.ts);
       const mon=new Date(d); mon.setDate(d.getDate()-d.getDay()+1);
       const wk=mon.toLocaleDateString("en-GB",{day:"numeric",month:"short"});
       const sets=s.loggedSets.filter(ls=>ls.exercise===exerciseName);
@@ -3703,7 +3703,7 @@ function buildVolumePerformanceScatter(sessions, muscle, exerciseName, goal="Hyp
         return score>b.score?{score,load:ls.load}:b;
       },{score:0,load:0});
       return{volume:volMap[wk]||0,score:best.score,
-             date:new Date(s.timestamp).toLocaleDateString("en-GB",{day:"numeric",month:"short"})};
+             date:new Date(s.timestamp||s.completedAt||s.ts).toLocaleDateString("en-GB",{day:"numeric",month:"short"})};
     })
     .filter(p=>p.score>0&&p.volume>0);
 }
@@ -3713,7 +3713,7 @@ function buildComplianceSeries(sessions, program){
   const freq=program?.freq??3;
   const weeks={};
   sessions.forEach(s=>{
-    const d=new Date(s.timestamp);
+    const d=new Date(s.timestamp||s.completedAt||s.ts);
     const mon=new Date(d); mon.setDate(d.getDate()-d.getDay()+1);
     const key=mon.toLocaleDateString("en-GB",{day:"numeric",month:"short"});
     weeks[key]=(weeks[key]||0)+1;
@@ -4539,7 +4539,7 @@ function Analytics({ sessions=[], prefs={}, completedMesos=0, muscleState, muscl
                   const avg=(s.loggedSets||[]).reduce((a,ls)=>a+(ls.pump||3),0)/Math.max(1,(s.loggedSets||[]).length);
                   const label=avg>=4?"High":avg>=3?"Mod":"Low";
                   const color=avg>=4?T.success:avg>=3?T.warning:T.orange;
-                  const date=new Date(s.timestamp).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+                  const date=new Date(s.timestamp||s.completedAt||s.ts).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
                   return(
                     <div key={i} style={{flex:1,background:T.bgRaise,borderRadius:12,padding:"8px 6px",textAlign:"center"}}>
                       <div style={{fontSize:10,color:T.textSec,marginBottom:3}}>{date}</div>
@@ -7325,7 +7325,7 @@ function CoachClientDetail({ client, onBack, onSendNote, coachNotes=[], appliedS
             <Card style={{marginBottom:12}}>
               <div style={{fontSize:11,color:T.textSec,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.08em"}}>Session history</div>
               {sessions.slice().reverse().slice(0,5).map((s,i)=>{
-                const date=new Date(s.timestamp).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+                const date=new Date(s.timestamp||s.completedAt||s.ts).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
                 return(
                   <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:i<Math.min(sessions.length,5)-1?`1px solid ${T.border}`:"none"}}>
                     <div>
