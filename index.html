@@ -1602,6 +1602,7 @@ function AuthScreen({ onAuth }){
         ) || null;
 
         console.log("doLogin: progRows=", progRows?.length, "picked=", progData?.name||"none");
+        if(progData) progData.days?.forEach((d,i)=>console.log("  day",i,"exercises:", d.exercises?.map(e=>e?.name)));
 
         if(progData) program = {
           name:        progData.name,
@@ -10827,6 +10828,7 @@ function App(){
         setCurrentDayIdx(0);
         const cu = userRef.current;
         console.log("MesoBuilder save: user=", cu?.id, "weeks=", p.weeks, "days=", p.days?.length);
+        p.days?.forEach((d,i)=>console.log("  day",i,"exercises:", d.exercises?.map(e=>e.name)));
         if(cu?.id){
           const {data:ex}=await sb.from("programs")
             .select("id").eq("owner_id",cu.id).eq("is_template",false)
