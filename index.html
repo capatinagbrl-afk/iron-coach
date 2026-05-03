@@ -10589,8 +10589,14 @@ function App(){
             days:p.days, is_template:false, assigned_by_coach:null,
             assignment_status:"accepted",
           };
-          if(ex){ await sb.from("programs").update(pr).eq("id",ex.id); }
-          else  { await sb.from("programs").insert(pr); }
+          console.log("onProgramReady: user.id=", user.id, "existing=", ex?.id||"none", "days=", p.days?.length);
+          if(ex){
+            const { error:ue } = await sb.from("programs").update(pr).eq("id",ex.id);
+            console.log("onProgramReady: UPDATE result error=", ue?.message||"none");
+          } else {
+            const { error:ie } = await sb.from("programs").insert(pr);
+            console.log("onProgramReady: INSERT result error=", ie?.message||"none");
+          }
         }
         if(!onboardingDone && user?.role==="athlete"){
           setOnboardStep(0);
