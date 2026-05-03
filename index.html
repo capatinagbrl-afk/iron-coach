@@ -10834,7 +10834,7 @@ function App(){
             const {error:ie}=await sb.from("programs").insert(pr);
             saveErr=ie;
           }
-
+        }
       }} user={user} prefs={prefs}/>),
     analytics: gated("analytics","Advanced Analytics",<Analytics sessions={sessions} prefs={prefs} completedMesos={completedMesos} muscleState={muscleState} muscleFatigue={applyDecaySinceLastSession(muscleFatigue,lastFatigueTs,user?.exp||"Intermediate")} muscleStateHistory={muscleStateHistory||[]} complianceHistory={complianceHistory||[]} program={program} exp={user?.exp||"Intermediate"}/>),
     library:   <ExerciseLibrary/>,
