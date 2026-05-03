@@ -10799,7 +10799,6 @@ function App(){
             days:p.days, is_template:false, assigned_by_coach:null,
             assignment_status:"accepted",
           };
-ne", "days=", p.days?.length);
           if(ex){
             const { error:ue } = await sb.from("programs").update(pr).eq("id",ex.id);
           } else {
