@@ -3425,6 +3425,7 @@ function MesoBuilder({ onNavigate, onSaveProgram, user, prefs }){
   const [editDayIdx,setEditDayIdx]=useState(null);
   const [dayExs,setDayExs]=useState([]);
   const [swapSearch,setSwapSearch]=useState("");
+  const [mesoFilter,setMesoFilter]=useState("all");
 
   function generate(){
     setLoading(true);
@@ -3440,7 +3441,7 @@ function MesoBuilder({ onNavigate, onSaveProgram, user, prefs }){
     },1100);
   }
 
-  function openEdit(idx){setEditDayIdx(idx);setDayExs([...program.days[idx].exercises]);setSwapSearch("");}
+  function openEdit(idx){setEditDayIdx(idx);setDayExs([...program.days[idx].exercises]);setSwapSearch("");setMesoFilter("all");}
   function removeDE(id){if(dayExs.length>1)setDayExs(p=>p.filter(e=>e.id!==id));}
   function addDE(ex){if(!dayExs.find(e=>e.id===ex.id))setDayExs(p=>[...p,ex]);}
   function saveEdit(){const days=program.days.map((d,i)=>i===editDayIdx?{...d,exercises:dayExs}:d);setProgram({...program,days});setEditDayIdx(null);}
@@ -3448,7 +3449,6 @@ function MesoBuilder({ onNavigate, onSaveProgram, user, prefs }){
   // Day editor
   if(editDayIdx!==null&&program){
     const day=program.days[editDayIdx];
-    const [mesoFilter,setMesoFilter]=useState("all");
     const mesoGroups=["all",...Object.keys(EXERCISES)];
     const mesoSeen=new Set();
     const mesoUnique=ALL_EXERCISES.filter(ex=>{
