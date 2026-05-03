@@ -9622,9 +9622,6 @@ function mapSession(row){
     ts,
     timestamp:   ts,   // alias used by history/analytics components
   };
-} Date(row.completed_at).getTime(),
-  };
-}
 
 // saveSession: write a completed session to Supabase
 async function saveSession(athleteId, programId, sessionData){
