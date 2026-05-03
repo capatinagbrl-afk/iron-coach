@@ -5625,7 +5625,7 @@ function AdaptationPanel({ sessions=[], program, muscleState, muscleFatigue={}, 
               const recent = sorted.filter(n=>(n.ts||0) >= thirtyDaysAgo);
               const older  = sorted.filter(n=>(n.ts||0) <  thirtyDaysAgo);
               // Always show newest 3 recent; rest behind "show more"
-              const SHOW = 3;
+              const SHOW = 1;
               const visibleRecent  = showAllNotes ? recent : recent.slice(0, SHOW);
               const hiddenRecent   = recent.length - visibleRecent.length;
               const renderNote = (note)=>{
@@ -5780,7 +5780,7 @@ function AdaptationPanel({ sessions=[], program, muscleState, muscleFatigue={}, 
               const thirtyDaysAgo = Date.now() - 30*24*60*60*1000;
               const recent = sorted.filter(n=>(n.ts||0) >= thirtyDaysAgo);
               const older  = sorted.filter(n=>(n.ts||0) <  thirtyDaysAgo);
-              const SHOW = 3;
+              const SHOW = 1;
               const visibleRecent = showAllNotes ? recent : recent.slice(0, SHOW);
               const hiddenRecent  = recent.length - visibleRecent.length;
               const renderNote = (note,i)=>{
