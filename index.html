@@ -2638,93 +2638,79 @@ function WorkoutScreen({ onNavigate, program, onSessionComplete, currentDayIdx=0
       !pendingAdds.find(e=>e.id===ex.id)
     );
     return(
-      <div style={{
-        position:"fixed",inset:0,
-        background:T.bgApp,
-        zIndex:300,
-        display:"flex",flexDirection:"column",
-        paddingTop:"env(safe-area-inset-top,0px)",
-      }}>
+      <div style={{display:"flex",flexDirection:"column",height:"100%"}}>
         {/* Header */}
-        <div style={{
-          padding:"14px 16px 10px",
-          borderBottom:`1px solid ${T.border}`,
-          flexShrink:0,
-        }}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-            <div>
-              <div style={{fontSize:17,fontWeight:800}}>Add exercises</div>
-              {pendingAdds.length>0&&(
-                <div style={{fontSize:11,color:T.accent,marginTop:1}}>
-                  {pendingAdds.length} selected
-                </div>
-              )}
-            </div>
-            <button
-              onClick={()=>{ setShowAdd(false); setPendingAdds([]); }}
-              style={{background:"none",border:`1px solid ${T.border}`,
-                borderRadius:8,color:T.textSec,cursor:"pointer",
-                fontSize:12,fontWeight:700,padding:"5px 12px",fontFamily:"inherit"}}>
-              Cancel
-            </button>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <div>
+            <div style={{fontSize:17,fontWeight:800}}>Add exercises</div>
+            {pendingAdds.length>0&&(
+              <div style={{fontSize:11,color:T.accent,marginTop:1}}>
+                {pendingAdds.length} selected
+              </div>
+            )}
           </div>
+          <button onClick={()=>{ setShowAdd(false); setPendingAdds([]); }}
+            style={{background:"none",border:`1px solid ${T.border}`,borderRadius:8,
+              color:T.textSec,cursor:"pointer",fontSize:12,fontWeight:700,
+              padding:"5px 12px",fontFamily:"inherit"}}>
+            Cancel
+          </button>
+        </div>
 
-          {/* Selected chips */}
-          {pendingAdds.length>0&&(
-            <div style={{display:"flex",gap:5,overflowX:"auto",paddingBottom:4,marginBottom:6}}>
-              {pendingAdds.map(ex=>(
-                <div key={ex.id} style={{
-                  display:"flex",alignItems:"center",gap:4,flexShrink:0,
-                  padding:"3px 8px 3px 10px",borderRadius:20,
-                  background:`${T.accent}18`,border:`1px solid ${T.accent}40`,
-                  fontSize:10,fontWeight:700,color:T.accent,
-                }}>
-                  {ex.name}
-                  <button onClick={()=>setPendingAdds(p=>p.filter(e=>e.id!==ex.id))}
-                    style={{background:"none",border:"none",color:T.accent,
-                      cursor:"pointer",fontSize:13,lineHeight:1,padding:"0 0 0 2px"}}>×</button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Search */}
-          <div style={{position:"relative",marginBottom:8}}>
-            <input value={addSearch}
-              onChange={e=>setAddSearch(e.target.value)}
-              placeholder="Search exercises…" autoFocus
-              style={{width:"100%",padding:"8px 12px 8px 30px",borderRadius:10,
-                border:`1px solid ${T.border}`,background:T.bgInput,
-                color:T.textPri,fontSize:13,fontFamily:"inherit",outline:"none"}}/>
-            <span style={{position:"absolute",left:9,top:"50%",transform:"translateY(-50%)",
-              color:T.textTer,fontSize:11,fontFamily:"'SF Mono','Menlo',monospace"}}>⌕</span>
-          </div>
-
-          {/* Filter chips */}
-          <div style={{display:"flex",gap:4,overflowX:"auto",paddingBottom:2}}>
-            {groups.map(g=>(
-              <button key={g} onClick={()=>setAddFilter(g)} style={{
-                flexShrink:0,padding:"4px 10px",borderRadius:12,
-                border:`1px solid ${addFilter===g?T.accent:T.border}`,
-                background:addFilter===g?`${T.accent}18`:T.bgRaise,
-                color:addFilter===g?T.accent:T.textSec,
-                fontSize:10,fontWeight:700,cursor:"pointer",
-                fontFamily:"inherit",textTransform:"capitalize",
-              }}>{g}</button>
+        {/* Selected chips */}
+        {pendingAdds.length>0&&(
+          <div style={{display:"flex",gap:5,overflowX:"auto",paddingBottom:4,marginBottom:8,flexShrink:0}}>
+            {pendingAdds.map(ex=>(
+              <div key={ex.id} style={{
+                display:"flex",alignItems:"center",gap:4,flexShrink:0,
+                padding:"3px 8px 3px 10px",borderRadius:20,
+                background:`${T.accent}18`,border:`1px solid ${T.accent}40`,
+                fontSize:10,fontWeight:700,color:T.accent,
+              }}>
+                {ex.name}
+                <button onClick={()=>setPendingAdds(p=>p.filter(e=>e.id!==ex.id))}
+                  style={{background:"none",border:"none",color:T.accent,
+                    cursor:"pointer",fontSize:13,lineHeight:1,padding:"0 0 0 2px"}}>×</button>
+              </div>
             ))}
           </div>
+        )}
+
+        {/* Search */}
+        <div style={{position:"relative",marginBottom:8,flexShrink:0}}>
+          <input value={addSearch} onChange={e=>setAddSearch(e.target.value)}
+            placeholder="Search exercises…" autoFocus
+            style={{width:"100%",padding:"8px 12px 8px 30px",borderRadius:10,
+              border:`1px solid ${T.border}`,background:T.bgInput,
+              color:T.textPri,fontSize:13,fontFamily:"inherit",outline:"none"}}/>
+          <span style={{position:"absolute",left:9,top:"50%",transform:"translateY(-50%)",
+            color:T.textTer,fontSize:11,fontFamily:"'SF Mono','Menlo',monospace"}}>⌕</span>
+        </div>
+
+        {/* Filter chips */}
+        <div style={{display:"flex",gap:4,overflowX:"auto",paddingBottom:4,marginBottom:6,flexShrink:0}}>
+          {groups.map(g=>(
+            <button key={g} onClick={()=>setAddFilter(g)} style={{
+              flexShrink:0,padding:"4px 10px",borderRadius:12,
+              border:`1px solid ${addFilter===g?T.accent:T.border}`,
+              background:addFilter===g?`${T.accent}18`:T.bgRaise,
+              color:addFilter===g?T.accent:T.textSec,
+              fontSize:10,fontWeight:700,cursor:"pointer",
+              fontFamily:"inherit",textTransform:"capitalize",
+            }}>{g}</button>
+          ))}
         </div>
 
         {/* Count */}
-        <div style={{padding:"6px 16px",fontSize:10,color:T.textTer,
-          fontFamily:"'SF Mono','Menlo',monospace",flexShrink:0}}>
+        <div style={{fontSize:10,color:T.textTer,marginBottom:6,flexShrink:0,
+          fontFamily:"'SF Mono','Menlo',monospace"}}>
           {filtered.length} exercise{filtered.length!==1?"s":""}
           {addFilter!=="all"?` · ${addFilter}`:""}
         </div>
 
-        {/* Exercise list — fills all available space */}
-        <div style={{flex:1,overflowY:"auto",padding:"0 16px"}}>
-          <div style={{display:"flex",flexDirection:"column",gap:6,paddingBottom:8}}>
+        {/* Exercise list */}
+        <div style={{flex:1,overflowY:"auto",marginBottom:10}}>
+          <div style={{display:"flex",flexDirection:"column",gap:6}}>
             {filtered.map(ex=>{
               const isPending=pendingAdds.find(e=>e.id===ex.id);
               return(
@@ -2768,44 +2754,31 @@ function WorkoutScreen({ onNavigate, program, onSessionComplete, currentDayIdx=0
               );
             })}
             {filtered.length===0&&(
-              <div style={{textAlign:"center",color:T.textTer,padding:40,fontSize:13}}>
+              <div style={{textAlign:"center",color:T.textTer,padding:28,fontSize:13}}>
                 No exercises found{addFilter!=="all"?` in ${addFilter}`:""}
               </div>
             )}
           </div>
         </div>
 
-        {/* Confirm button — sticky above bottom nav */}
-        <div style={{
-          padding:"10px 16px",
-          padding:`10px 16px max(env(safe-area-inset-bottom,10px),10px)`,
-          borderTop:`1px solid ${T.border}`,
-          background:T.bgCard,
-          flexShrink:0,
-        }}>
-          <button
-            disabled={pendingAdds.length===0}
-            onClick={()=>{
-              pendingAdds.forEach(ex=>addEx(ex));
-              setShowAdd(false);
-              setPendingAdds([]);
-            }}
-            style={{
-              width:"100%",padding:"13px",borderRadius:12,border:"none",
-              background:pendingAdds.length>0?T.accent:T.bgRaise,
-              color:pendingAdds.length>0?"#000":T.textTer,
-              fontWeight:800,fontSize:14,cursor:pendingAdds.length>0?"pointer":"default",
-              fontFamily:"inherit",transition:"all 0.2s",
-            }}>
-            {pendingAdds.length>0
-              ? `Add ${pendingAdds.length} exercise${pendingAdds.length!==1?"s":""} →`
-              : "Select exercises above to add"}
-          </button>
-        </div>
+        {/* Confirm button */}
+        <button
+          disabled={pendingAdds.length===0}
+          onClick={()=>{ pendingAdds.forEach(ex=>addEx(ex)); setShowAdd(false); setPendingAdds([]); }}
+          style={{
+            width:"100%",padding:"12px",borderRadius:12,border:"none",
+            background:pendingAdds.length>0?T.accent:T.bgRaise,
+            color:pendingAdds.length>0?"#000":T.textTer,
+            fontWeight:800,fontSize:14,cursor:pendingAdds.length>0?"pointer":"default",
+            fontFamily:"inherit",transition:"all 0.2s",flexShrink:0,
+          }}>
+          {pendingAdds.length>0
+            ? `Add ${pendingAdds.length} exercise${pendingAdds.length!==1?"s":""} →`
+            : "Select exercises to add"}
+        </button>
       </div>
     );
   }
-
   // Finish summary
   if(showFinish){
     const avgPump=loggedSets.reduce((a,s)=>a+(s.pump||3),0)/(loggedSets.length||1);
