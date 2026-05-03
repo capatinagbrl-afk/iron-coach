@@ -10629,7 +10629,32 @@ function App(){
         }
       }} showOnboarding={showOnboarding} onboardStep={onboardStep} onNextOnboard={dir=>{ const next=onboardStep+(dir??1); if(next>=ONBOARD_STEPS.length){ setShowOnboarding(false);setOnboardingDone(true); } else if(next<0){ setOnboardStep(0); } else { setOnboardStep(next); } }} onSkipOnboard={()=>{setShowOnboarding(false);setOnboardingDone(true);}} muscleFatigue={applyDecaySinceLastSession(muscleFatigue,lastFatigueTs,user?.exp||"Intermediate")} lastFatigueTs={lastFatigueTs}/>,
     workout:   <WorkoutScreen onNavigate={setScreen} program={program} onSessionComplete={handleSessionComplete} currentDayIdx={currentDayIdx} prefs={prefs}/>,
-    meso:      gated("meso","Meso Builder",<MesoBuilder onNavigate={setScreen} onSaveProgram={p=>{setProgram(p);setCurrentDayIdx(0);}} user={user} prefs={prefs}/>),
+    meso:      gated("meso","Meso Builder",<MesoBuilder onNavigate={setScreen} onSaveProgram={async p=>{
+        setProgram(p);
+        setCurrentDayIdx(0);
+        const cu = userRef.current;
+        console.log("MesoBuilder save: user=", cu?.id, "weeks=", p.weeks, "days=", p.days?.length);
+        if(cu?.id){
+          const {data:ex}=await sb.from("programs")
+            .select("id").eq("owner_id",cu.id).eq("is_template",false)
+            .is("assigned_by_coach",null).limit(1).maybeSingle();
+          const pr={
+            owner_id:cu.id, name:p.name, goal:p.goal, weeks:p.weeks,
+            freq:p.freq, current_week:p.currentWeek||1, current_day:0,
+            days:p.days, is_template:false, assigned_by_coach:null,
+            assignment_status:"accepted",
+          };
+          let saveErr;
+          if(ex){
+            const {error:ue}=await sb.from("programs").update(pr).eq("id",ex.id);
+            saveErr=ue;
+          } else {
+            const {error:ie}=await sb.from("programs").insert(pr);
+            saveErr=ie;
+          }
+          console.log("MesoBuilder save result:", saveErr?.message||"OK");
+        }
+      }} user={user} prefs={prefs}/>),
     analytics: gated("analytics","Advanced Analytics",<Analytics sessions={sessions} prefs={prefs} completedMesos={completedMesos} muscleState={muscleState} muscleFatigue={applyDecaySinceLastSession(muscleFatigue,lastFatigueTs,user?.exp||"Intermediate")} muscleStateHistory={muscleStateHistory||[]} complianceHistory={complianceHistory||[]} program={program} exp={user?.exp||"Intermediate"}/>),
     library:   <ExerciseLibrary/>,
     adapt:     gated("adapt","Adaptation & Coach",<AdaptationPanel sessions={sessions} program={program} muscleState={muscleState} muscleFatigue={applyDecaySinceLastSession(muscleFatigue,lastFatigueTs,user?.exp||"Intermediate")} currentDayIdx={currentDayIdx} onProgramChange={p=>{setProgram(p);}} user={user}/>),
