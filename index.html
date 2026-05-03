@@ -267,7 +267,7 @@ html,body{margin:0;padding:0;width:100%;min-height:100vh;}
   .pf-screen main{scrollbar-width:none;}
 }
 @media(max-width:499px){
-  body{margin:0;padding:0;}
+  body{margin:0;padding:0;background:#080809;overflow:hidden;}
   .pf-outer{display:contents;}
   .pf-screen{display:contents;}
   .pf-notch{display:none;}
@@ -279,17 +279,25 @@ html,body{margin:0;padding:0;width:100%;min-height:100vh;}
   }
   /* Main scroll area fills all space above fixed nav */
   .pf-screen main {
-    padding-bottom:80px!important;
+    padding-bottom:88px!important;
+    -webkit-overflow-scrolling:touch!important;
   }
-  /* Fix nav bar to bottom of viewport on mobile */
+  /* Fix nav bar to bottom of viewport on mobile — athlete and coach */
   .mobile-nav-fixed {
     position:fixed!important;
     bottom:0!important;
     left:0!important;
     right:0!important;
-    z-index:200!important;
-    padding-bottom:max(env(safe-area-inset-bottom,12px),12px)!important;
+    z-index:500!important;
+    padding-bottom:env(safe-area-inset-bottom,0px)!important;
   }
+  /* Prevent horizontal overflow on small screens */
+  * { max-width:100vw; }
+  img, video { max-width:100%; }
+}
+/* Very small screens (< 360px) — scale down tight elements */
+@media(max-width:359px){
+  .pf-screen main { font-size:14px; }
 }
 `;
 
@@ -8983,7 +8991,7 @@ function CoachNav({ current, onNavigate }){
     if(next>=0){ e.preventDefault(); btnRefs.current[next]?.focus(); }
   }
   return(
-    <nav aria-label="Coach navigation" style={{position:"sticky",bottom:0,zIndex:200,display:"flex",justifyContent:"center",padding:"12px 16px max(env(safe-area-inset-bottom,12px),12px)",background:"transparent",pointerEvents:"none"}}>
+    <nav aria-label="Coach navigation" className="mobile-nav-fixed" style={{position:"sticky",bottom:0,zIndex:200,display:"flex",justifyContent:"center",padding:"12px 16px max(env(safe-area-inset-bottom,12px),12px)",background:"transparent",pointerEvents:"none"}}>
       <div style={{display:"flex",gap:4,background:`${T.bgCard}f2`,backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid ${T.teal}50`,borderRadius:16,padding:"6px 8px",boxShadow:"0 8px 32px rgba(0,0,0,0.5)",pointerEvents:"all"}}>
         {COACH_NAV.map((item,idx)=>{
           const active=current===item.id;
@@ -8993,7 +9001,7 @@ function CoachNav({ current, onNavigate }){
               tabIndex={active?0:-1}
               onClick={()=>onNavigate(item.id)}
               onKeyDown={e=>handleKeyDown(e,idx)}
-              style={{background:active?`${T.teal}20`:"transparent",border:`1px solid ${active?T.teal+"60":"transparent"}`,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:"8px 16px",borderRadius:16,transition:"all 0.2s",minWidth:58,minHeight:52,justifyContent:"center"}}>
+              style={{background:active?`${T.teal}20`:"transparent",border:`1px solid ${active?T.teal+"60":"transparent"}`,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:"6px 8px",borderRadius:12,transition:"all 0.2s",flex:1,minWidth:0,minHeight:48,justifyContent:"center"}}>
               <div style={{fontSize:16,color:active?T.teal:T.textTer,filter:active?`drop-shadow(0 0 6px ${T.teal}90)`:"none",transition:"all 0.2s",lineHeight:1}}>{item.icon}</div>
               <div style={{fontSize:10,fontWeight:600,letterSpacing:"0.04em",color:active?T.teal:T.textTer,textTransform:"uppercase",transition:"all 0.2s"}}>{item.label}</div>
             </button>
@@ -10304,7 +10312,7 @@ function BottomNav({ current, onNavigate, navRef, badges={} }){
                 padding:"7px 10px",
                 borderRadius:12,
                 transition:"all 0.2s",
-                minWidth:52, minHeight:48,
+                flex:1, minWidth:0, minHeight:48,
                 justifyContent:"center",
                 flex:1,
               }}>
