@@ -328,6 +328,9 @@ const EXERCISES = {
     { id:"b11", name:"Pendlay Row",                         equip:"barbell",   pattern:"horizontal_pull", diff:3, goal:"S", sets:5, reps:"3–5",  rir:1, cues:["Dead stop each rep","Horizontal torso","Explosive pull"] },
     { id:"b15", name:"Sumo Deadlift",                       equip:"barbell",   pattern:"hip_hinge",       diff:3, goal:"S", sets:4, reps:"2–4",  rir:1, cues:["Wide stance","Push floor away","Lockout hard"] },
     { id:"b16", name:"Rack Pull",                           equip:"barbell",   pattern:"hip_hinge",       diff:3, goal:"S", sets:4, reps:"3–5",  rir:1, cues:["Bar at knee","Drive hips through","Overhand or mixed grip"] },
+    { id:"b17", name:"Neutral-Grip Lat Pulldown",  equip:"machine",  pattern:"vertical_pull",   diff:1, goal:"S", sets:4, reps:"6–10", rir:2, cues:["Chest up","Elbows to hips","Squeeze lats"] },
+    { id:"b18", name:"Seated Machine Row",          equip:"machine",  pattern:"horizontal_pull", diff:1, goal:"S", sets:4, reps:"6–10", rir:2, cues:["Chest to pad","Pull to navel","Full retraction"] },
+    { id:"b19", name:"DB Seal Row",                 equip:"dumbbell", pattern:"horizontal_pull", diff:2, goal:"S", sets:4, reps:"6–10", rir:2, cues:["Chest on bench","Elbows tucked","Full ROM"] },
     { id:"b3",  name:"Lat Pulldown",                        equip:"cable",     pattern:"vertical_pull",   diff:1, goal:"H", sets:4, reps:"8–12", rir:2, cues:["Lean back slightly","Pull to upper chest","Scapula depress"] },
     { id:"b4",  name:"Seated Cable Row",                    equip:"cable",     pattern:"horizontal_pull", diff:2, goal:"H", sets:4, reps:"10–14",rir:2, cues:["Brace core","Drive elbows back","Squeeze at peak"] },
     { id:"b5",  name:"DB Single-Arm Row",                   equip:"dumbbell",  pattern:"horizontal_pull", diff:2, goal:"H", sets:3, reps:"10–14",rir:2, cues:["Parallel torso","Full stretch","Elbow to hip"] },
@@ -354,6 +357,9 @@ const EXERCISES = {
     { id:"l11", name:"Plate-Loaded Seated Calf Raise",  equip:"machine",   pattern:"ankle_plantar",   diff:1, goal:"H", sets:4, reps:"15–20",rir:2, cues:["Full stretch at bottom","Pause at top","Slow controlled drop"] },
     { id:"l12", name:"Pin-Select Viking Press",         equip:"machine",   pattern:"squat",           diff:2, goal:"H", sets:4, reps:"10–15",rir:2, cues:["Core braced","Full ROM","Controlled descent"] },
     { id:"l13", name:"Plate-Loaded Standing Ham Curl",  equip:"machine",   pattern:"knee_flexion",    diff:2, goal:"H", sets:3, reps:"10–15",rir:2, cues:["Hip hinge slightly","Curl heel to glute","Squeeze at peak"] },
+    { id:"l23", name:"Leg Press (Heavy)",      equip:"machine",  pattern:"squat",            diff:1, goal:"S", sets:5, reps:"6–10", rir:1, cues:["Feet shoulder-width","Full depth","Drive through heels"] },
+    { id:"l24", name:"Smith Machine Squat",    equip:"machine",  pattern:"squat",            diff:2, goal:"S", sets:4, reps:"5–8",  rir:1, cues:["Bar on traps","Vertical shins","Controlled descent"] },
+    { id:"l25", name:"Hack Squat",             equip:"machine",  pattern:"squat",            diff:2, goal:"S", sets:4, reps:"6–8",  rir:1, cues:["Feet forward","Full depth","Knees track toes"] },
     { id:"l14", name:"Conventional Deadlift",           equip:"barbell",   pattern:"hip_hinge",       diff:3, goal:"S", sets:5, reps:"1–5",  rir:1, cues:["Hips to bar","Push floor away","Neutral spine lock"] },
     { id:"l15", name:"Front Squat",                     equip:"barbell",   pattern:"squat",           diff:3, goal:"S", sets:5, reps:"3–5",  rir:1, cues:["Elbows high","Upright torso","Hip crease below knee"] },
     { id:"l16", name:"Sumo Deadlift",                   equip:"barbell",   pattern:"hip_hinge",       diff:3, goal:"S", sets:4, reps:"2–5",  rir:1, cues:["Wide stance","Toes out 45°","Push knees out"] },
@@ -362,7 +368,6 @@ const EXERCISES = {
     { id:"l19", name:"Nordic Ham Curl",                 equip:"bodyweight",pattern:"knee_flexion",    diff:3, goal:"S", sets:3, reps:"4–8",  rir:1, cues:["Eccentric focus","Catch at bottom","Control descent"] },
     { id:"l20", name:"Goblet Squat",                    equip:"dumbbell",  pattern:"squat",           diff:1, goal:"H", sets:3, reps:"12–15",rir:2, cues:["Chest up","Elbows inside knees","Full depth"] },
     { id:"l21", name:"Safety Bar Squat",       equip:"barbell",   pattern:"squat",     diff:3, goal:"S", sets:4, reps:"3–6",  rir:1, cues:["Upright torso","Brace 360°","Full depth"] },
-    { id:"l22", name:"Conventional Deadlift",  equip:"barbell",   pattern:"hip_hinge", diff:3, goal:"S", sets:4, reps:"2–5",  rir:1, cues:["Bar over mid-foot","Hinge then squat down","Drive floor away"] },
   ],
   shoulders: [
     { id:"s1",  name:"Overhead Press",                   equip:"barbell",   pattern:"vertical_push",   diff:3, goal:"S", sets:5, reps:"3–5",  rir:1, cues:["Tight glutes","Press slightly back","Lock out"] },
@@ -375,6 +380,9 @@ const EXERCISES = {
     { id:"s8",  name:"Plate-Loaded Viking Shoulder Press",equip:"machine",  pattern:"vertical_push",   diff:2, goal:"H", sets:4, reps:"8–12", rir:2, cues:["Neutral grip handles","Elbows slightly forward","Full overhead extension"] },
     { id:"s9",  name:"Seated Barbell Press",             equip:"barbell",   pattern:"vertical_push",   diff:3, goal:"S", sets:5, reps:"3–5",  rir:1, cues:["Rack at chin height","Full lockout","Controlled descent"] },
     { id:"s10", name:"Push Press",                       equip:"barbell",   pattern:"vertical_push",   diff:3, goal:"S", sets:4, reps:"3–6",  rir:1, cues:["Dip and drive","Catch overhead","Full lockout"] },
+    { id:"s15", name:"Seated DB Shoulder Press", equip:"dumbbell", pattern:"vertical_push", diff:2, goal:"S", sets:4, reps:"6–10", rir:1, cues:["Neutral grip start","Press overhead","Control descent"] },
+    { id:"s16", name:"Smith Machine OHP",         equip:"machine",  pattern:"vertical_push", diff:2, goal:"S", sets:4, reps:"5–8",  rir:1, cues:["Bar in front","Slight forward lean","Lock out overhead"] },
+    { id:"s17", name:"Machine Shoulder Press",    equip:"machine",  pattern:"vertical_push", diff:1, goal:"S", sets:4, reps:"8–12", rir:2, cues:["Adjust seat height","Full range","Controlled tempo"] },
     { id:"s11", name:"Arnold Press",                     equip:"dumbbell",  pattern:"vertical_push",   diff:2, goal:"H", sets:3, reps:"10–12",rir:2, cues:["Rotate during press","Full ROM","Control descent"] },
     { id:"s12", name:"Cable Face Pull",                  equip:"cable",     pattern:"rear_delt",       diff:1, goal:"H", sets:4, reps:"15–20",rir:2, cues:["Pull to forehead","External rotate","High elbows"] },
     { id:"s13", name:"Log Press",                   equip:"barbell",   pattern:"vertical_push",  diff:3, goal:"S", sets:4, reps:"3–6",  rir:1, cues:["Neutral grip","Full lockout","Brace hard"] },
@@ -398,6 +406,62 @@ const EXERCISES = {
     { id:"a15", name:"Skull Crusher",                  equip:"barbell",   pattern:"elbow_extension", diff:2, goal:"H", sets:3, reps:"10–14",rir:2, cues:["Elbows vertical","Bar to forehead","Full lockout"] },
     { id:"a16", name:"Floor Press (Tricep)",     equip:"barbell",   pattern:"elbow_extension", diff:2, goal:"S", sets:4, reps:"4–8",  rir:1, cues:["Elbows tucked","Pause at floor","Full lockout"] },
     { id:"a17", name:"Swiss Bar Curl",            equip:"barbell",   pattern:"elbow_flexion",   diff:2, goal:"S", sets:4, reps:"5–8",  rir:1, cues:["Neutral grip","Elbows pinned","Slow eccentric"] },
+  ],
+  hamstrings: [
+    { id:"h1",  name:"Lying Leg Curl",              equip:"machine",   pattern:"knee_flexion",       diff:1, goal:"H", sets:4, reps:"10–15",rir:2, cues:["Full ROM","Plantarflex foot","Control eccentric"] },
+    { id:"h2",  name:"Seated Leg Curl",             equip:"machine",   pattern:"knee_flexion",       diff:1, goal:"H", sets:4, reps:"10–15",rir:2, cues:["Knee at 90° start","Squeeze at bottom","Slow negative"] },
+    { id:"h3",  name:"Assisted Nordic Curl",        equip:"bodyweight",pattern:"knee_flexion",       diff:2, goal:"S", sets:4, reps:"4–8",  rir:1, cues:["Ankles fixed","Lower slowly","Push up with hands"] },
+    { id:"h4",  name:"Barbell RDL",                 equip:"barbell",   pattern:"hip_hinge",          diff:2, goal:"S", sets:4, reps:"6–10", rir:2, cues:["Hinge at hips","Soft knee","Bar close to legs"] },
+    { id:"h5",  name:"DB Romanian Deadlift",        equip:"dumbbell",  pattern:"hip_hinge",          diff:2, goal:"H", sets:4, reps:"8–12", rir:2, cues:["Push hips back","Feel hamstring stretch","Neutral spine"] },
+    { id:"h6",  name:"Good Morning",               equip:"barbell",   pattern:"hip_hinge",          diff:3, goal:"S", sets:4, reps:"6–10", rir:2, cues:["Bar on upper back","Hinge deep","Brace core"] },
+  ],
+  glutes: [
+    { id:"g1",  name:"Barbell Hip Thrust",          equip:"barbell",   pattern:"hip_extension",      diff:2, goal:"S", sets:4, reps:"8–12", rir:2, cues:["Shoulders on bench","Drive hips up","Squeeze at top"] },
+    { id:"g2",  name:"DB Hip Thrust",               equip:"dumbbell",  pattern:"hip_extension",      diff:1, goal:"H", sets:4, reps:"10–15",rir:2, cues:["Full hip extension","Posterior pelvic tilt","Pause at top"] },
+    { id:"g3",  name:"Cable Glute Kickback",        equip:"cable",     pattern:"hip_extension",      diff:1, goal:"H", sets:3, reps:"12–15",rir:2, cues:["Hinge slightly","Full extension","Don't rotate hips"] },
+    { id:"g4",  name:"Glute Bridge",                equip:"bodyweight",pattern:"hip_extension",      diff:1, goal:"H", sets:3, reps:"15–20",rir:3, cues:["Feet flat","Drive through heels","Squeeze glutes"] },
+    { id:"g5",  name:"DB Bulgarian Split Squat",   equip:"dumbbell",  pattern:"single_leg",          diff:2, goal:"H", sets:4, reps:"8–12", rir:2, cues:["Torso upright","Front foot loaded","Full depth"] },
+    { id:"g6",  name:"Smith Machine Hip Thrust",    equip:"machine",   pattern:"hip_extension",      diff:1, goal:"S", sets:4, reps:"8–12", rir:2, cues:["Bar padded","Full extension","Controlled return"] },
+  ],
+  calves: [
+    { id:"ca1", name:"Standing Calf Raise",         equip:"machine",   pattern:"ankle_plantar",      diff:1, goal:"H", sets:5, reps:"10–15",rir:1, cues:["Full stretch at bottom","Pause at top","Slow eccentric"] },
+    { id:"ca2", name:"Seated Calf Raise",           equip:"machine",   pattern:"ankle_plantar",      diff:1, goal:"H", sets:4, reps:"12–20",rir:2, cues:["Knees at 90°","Full ROM","Squeeze soleus"] },
+    { id:"ca3", name:"Leg Press Calf Raise",        equip:"machine",   pattern:"ankle_plantar",      diff:1, goal:"H", sets:4, reps:"15–20",rir:2, cues:["Toes on edge","Full plantarflex","Control stretch"] },
+    { id:"ca4", name:"DB Single-Leg Calf Raise",   equip:"dumbbell",  pattern:"ankle_plantar",      diff:2, goal:"H", sets:3, reps:"10–15",rir:2, cues:["Balance on one foot","Full ROM","Hold for stability"] },
+    { id:"ca5", name:"Donkey Calf Raise",           equip:"machine",   pattern:"ankle_plantar",      diff:2, goal:"S", sets:4, reps:"10–15",rir:1, cues:["Bent over","Weight on hips","Full stretch"] },
+    { id:"ca6", name:"Barbell Standing Calf Raise", equip:"barbell",   pattern:"ankle_plantar",      diff:3, goal:"S", sets:5, reps:"6–10", rir:1, cues:["Bar on back","Slow descent","Full plantar flex"] },
+  ],
+  core: [
+    { id:"co1", name:"Cable Crunch",                equip:"cable",     pattern:"trunk_flexion",      diff:1, goal:"H", sets:3, reps:"12–15",rir:2, cues:["Hips fixed","Round through spine","Feel abs contract"] },
+    { id:"co2", name:"Ab Wheel Rollout",            equip:"bodyweight",pattern:"trunk_flexion",      diff:2, goal:"H", sets:3, reps:"8–12", rir:2, cues:["Brace tight","Extend slowly","Pull back with lats"] },
+    { id:"co3", name:"Hanging Leg Raise",           equip:"bodyweight",pattern:"trunk_flexion",      diff:2, goal:"H", sets:3, reps:"10–15",rir:2, cues:["Posterior pelvic tilt","Control the swing","Slow negative"] },
+    { id:"co4", name:"Plank",                       equip:"bodyweight",pattern:"trunk_flexion",      diff:1, goal:"H", sets:3, reps:"30–60s",rir:2, cues:["Neutral spine","Squeeze everything","Breathe"] },
+    { id:"co5", name:"Weighted Decline Sit-Up",    equip:"dumbbell",  pattern:"trunk_flexion",      diff:2, goal:"S", sets:3, reps:"10–15",rir:2, cues:["Full ROM","Hold plate at chest","Controlled descent"] },
+    { id:"co6", name:"Dragon Flag",                 equip:"bodyweight",pattern:"trunk_flexion",      diff:3, goal:"S", sets:3, reps:"5–8",  rir:2, cues:["Straight body","Lower controlled","Brace entire trunk"] },
+  ],
+  traps: [
+    { id:"tr1", name:"Barbell Shrug",               equip:"barbell",   pattern:"scapular_elevation", diff:2, goal:"S", sets:4, reps:"8–12", rir:1, cues:["Straight up","Hold 1s at top","No rolling"] },
+    { id:"tr2", name:"DB Shrug",                    equip:"dumbbell",  pattern:"scapular_elevation", diff:1, goal:"H", sets:4, reps:"10–15",rir:2, cues:["Neutral grip","Squeeze traps","Full depression first"] },
+    { id:"tr3", name:"Behind-Back Barbell Shrug",  equip:"barbell",   pattern:"scapular_elevation", diff:3, goal:"S", sets:4, reps:"6–10", rir:1, cues:["Bar behind thighs","Pull straight up","Retract at top"] },
+    { id:"tr4", name:"Cable Shrug",                 equip:"cable",     pattern:"scapular_elevation", diff:1, goal:"H", sets:3, reps:"12–15",rir:2, cues:["Constant tension","Slow controlled","Squeeze at top"] },
+    { id:"tr5", name:"Farmer Carry",                equip:"dumbbell",  pattern:"scapular_elevation", diff:2, goal:"S", sets:4, reps:"30m",  rir:1, cues:["Tall posture","Grip tight","Traps packed"] },
+    { id:"tr6", name:"Snatch-Grip Deadlift",        equip:"barbell",   pattern:"scapular_elevation", diff:3, goal:"S", sets:4, reps:"4–6",  rir:1, cues:["Wide grip","Upper back tight","Bar close to body"] },
+  ],
+  forearms: [
+    { id:"f1",  name:"Barbell Wrist Curl",          equip:"barbell",   pattern:"wrist_flexion",      diff:1, goal:"H", sets:3, reps:"12–20",rir:2, cues:["Forearms on bench","Full ROM","Controlled"] },
+    { id:"f2",  name:"Reverse Barbell Curl",        equip:"barbell",   pattern:"wrist_extension",    diff:2, goal:"S", sets:3, reps:"8–12", rir:2, cues:["Overhand grip","Elbows fixed","Full extension"] },
+    { id:"f3",  name:"DB Wrist Curl",               equip:"dumbbell",  pattern:"wrist_flexion",      diff:1, goal:"H", sets:3, reps:"15–20",rir:2, cues:["One arm at a time","Full ROM","Squeeze"] },
+    { id:"f4",  name:"Cable Reverse Curl",          equip:"cable",     pattern:"wrist_extension",    diff:1, goal:"H", sets:3, reps:"12–15",rir:2, cues:["Constant tension","Elbows stable","Wrist neutral"] },
+    { id:"f5",  name:"Plate Pinch",                 equip:"barbell",   pattern:"grip",               diff:1, goal:"S", sets:3, reps:"30s",  rir:2, cues:["Pinch with fingertips","Maintain for time","Both hands"] },
+    { id:"f6",  name:"Towel Pull-Up",               equip:"bodyweight",pattern:"grip",               diff:3, goal:"S", sets:3, reps:"5–8",  rir:2, cues:["Towel over bar","Crush grip","Full ROM"] },
+  ],
+  obliques: [
+    { id:"ob1", name:"Cable Woodchop",              equip:"cable",     pattern:"trunk_rotation",     diff:1, goal:"H", sets:3, reps:"12–15",rir:2, cues:["Rotate through trunk","Arms mostly straight","Control return"] },
+    { id:"ob2", name:"Russian Twist",               equip:"dumbbell",  pattern:"trunk_rotation",     diff:1, goal:"H", sets:3, reps:"15–20",rir:2, cues:["Feet up","Twist fully","Touch weight to floor"] },
+    { id:"ob3", name:"Side Plank",                  equip:"bodyweight",pattern:"lateral_flexion",    diff:1, goal:"H", sets:3, reps:"30s",  rir:2, cues:["Hips stacked","Elbow under shoulder","Stay rigid"] },
+    { id:"ob4", name:"Pallof Press",                equip:"cable",     pattern:"trunk_rotation",     diff:1, goal:"S", sets:3, reps:"10–12",rir:2, cues:["Anti-rotation","Brace hard","Press and return"] },
+    { id:"ob5", name:"Landmine Rotation",           equip:"barbell",   pattern:"trunk_rotation",     diff:2, goal:"S", sets:3, reps:"10–12",rir:2, cues:["Arc bar side to side","Core braced","Athletic stance"] },
+    { id:"ob6", name:"Weighted Side Bend",          equip:"dumbbell",  pattern:"lateral_flexion",    diff:1, goal:"H", sets:3, reps:"12–15",rir:2, cues:["Hold DB one side","Bend laterally","Stretch opposite oblique"] },
   ],
 };
 
@@ -480,46 +544,65 @@ function shuffle(arr){
   return a;
 }
 
-function pickExercisesForDay(muscles, tag, splitType="2-major") {
-  const chosen = [];
+function pickExercisesForDay(muscles, tag, splitType="2-major", exp="Intermediate") {
+  const chosen  = [];
   const usedIds = new Set();
+
+  const EXP_CONFIG = {
+    Beginner:     { maxDiff:2, fillDiff:2, countBase:2, countSec:1 },
+    Intermediate: { maxDiff:3, fillDiff:3, countBase:3, countSec:2 },
+    Advanced:     { maxDiff:3, fillDiff:3, countBase:4, countSec:2 },
+    Elite:        { maxDiff:3, fillDiff:3, countBase:4, countSec:3 },
+  };
+  const cfg = EXP_CONFIG[exp] || EXP_CONFIG.Intermediate;
 
   const secondaryMuscles = {
     chest:["arms"], back:["arms"], legs:["shoulders"],
     shoulders:["arms"], arms:["chest"],
   };
 
-  let targetMuscles=[...muscles];
-  if(splitType==="1-major-1-sec"&&muscles.length===1){
-    const sec=(secondaryMuscles[muscles[0]]||["arms"])[0];
-    targetMuscles=[muscles[0],sec];
+  let targetMuscles = [...muscles];
+  if(splitType==="1-major-1-sec" && muscles.length===1){
+    const sec = (secondaryMuscles[muscles[0]] || ["arms"])[0];
+    targetMuscles = [muscles[0], sec];
   }
-  const isMajorSec=splitType==="1-major-1-sec"&&targetMuscles.length>=2;
+  const isMajorSec = splitType==="1-major-1-sec" && targetMuscles.length >= 2;
 
-  targetMuscles.forEach((muscle,mIdx)=>{
-    const tagPool  = ALL_EXERCISES.filter(e=>e.muscleGroup===muscle&&e.goal===tag&&!usedIds.has(e.id));
-    const fullPool = ALL_EXERCISES.filter(e=>e.muscleGroup===muscle&&!usedIds.has(e.id));
+  targetMuscles.forEach((muscle, mIdx)=>{
+    const count = isMajorSec
+      ? (mIdx === 0 ? cfg.countBase : cfg.countSec)
+      : cfg.countBase;
 
-    // Need at least (count+1) exercises in tagPool to use it — otherwise fall back
-    // to fullPool so there is enough variety to pick from
-    const count = isMajorSec ? (mIdx===0 ? 2 : 1) : 2;
-    const pool = tagPool.length >= count + 1 ? tagPool : fullPool;
+    // Pool filtered by experience ceiling and goal tag
+    const tagPool = ALL_EXERCISES.filter(e=>
+      e.muscleGroup===muscle && e.goal===tag &&
+      e.diff<=cfg.fillDiff && !usedIds.has(e.id)
+    );
+    const fallbackPool = ALL_EXERCISES.filter(e=>
+      e.muscleGroup===muscle && e.diff<=cfg.fillDiff && !usedIds.has(e.id)
+    );
+    const pool = tagPool.length >= count + 1 ? tagPool : fallbackPool;
 
-    // Sort by difficulty descending to identify the "compound tier"
-    const sorted = [...pool].sort((a,b)=>b.diff-a.diff);
-
-    // Anchor = randomly chosen from the top-tier exercises (same max diff)
-    // This prevents always locking in the same compound when multiple share peak diff
-    const maxDiff = sorted[0]?.diff ?? 0;
-    const topTier = sorted.filter(e=>e.diff===maxDiff);
-    const shuffledTop = shuffle(topTier);
-    const anchor = shuffledTop[0];
-
-    // Fill remaining slots from a shuffled pool of the rest
-    const rest = shuffle(sorted.filter(e=>e.id!==anchor?.id));
+    // Anchor = highest difficulty within experience ceiling, randomly chosen from top tier
+    const anchorPool = pool.filter(e=>e.diff<=cfg.maxDiff).sort((a,b)=>b.diff-a.diff);
+    const maxAnchorDiff = anchorPool[0]?.diff ?? 0;
+    const topTier = anchorPool.filter(e=>e.diff===maxAnchorDiff);
+    const anchor  = shuffle(topTier)[0];
 
     if(anchor){ chosen.push(anchor); usedIds.add(anchor.id); }
-    for(const ex of rest){
+
+    // Fill remaining slots — first prefer different movement patterns for variety
+    const usedPatterns = new Set(anchor ? [anchor.pattern] : []);
+    const remaining = shuffle(pool.filter(e=>e.id!==anchor?.id));
+
+    for(const ex of remaining){
+      if(chosen.filter(e=>e.muscleGroup===muscle).length>=count) break;
+      if(!usedIds.has(ex.id) && !usedPatterns.has(ex.pattern)){
+        chosen.push(ex); usedIds.add(ex.id); usedPatterns.add(ex.pattern);
+      }
+    }
+    // Second pass — fill any remaining regardless of pattern
+    for(const ex of remaining){
       if(chosen.filter(e=>e.muscleGroup===muscle).length>=count) break;
       if(!usedIds.has(ex.id)){ chosen.push(ex); usedIds.add(ex.id); }
     }
@@ -1796,7 +1879,7 @@ function SetupWizard({ user, prefs, onPrefsChange, onProgramReady }){
       const days=template.map(d=>({
         ...d,
         focus: makeDayFocusLabel(d.muscles, splitType),
-        exercises: pickExercisesForDay(d.muscles, d.tag, splitType),
+        exercises: pickExercisesForDay(d.muscles, d.tag, splitType, exp||"Intermediate"),
       }));
       onProgramReady({name:`${g} Block A`,goal:g,weeks:6,freq,currentWeek:1,days});
     },1400);
@@ -3349,7 +3432,7 @@ function MesoBuilder({ onNavigate, onSaveProgram, user, prefs }){
       const days=template.map(d=>({
         ...d,
         focus: makeDayFocusLabel(d.muscles, prefs?.splitType||"2-major"),
-        exercises:pickExercisesForDay(d.muscles,d.tag,prefs?.splitType||"2-major"),
+        exercises:pickExercisesForDay(d.muscles,d.tag,prefs?.splitType||"2-major",exp||"Intermediate"),
       }));
       setProgram({name:`${goal} Block`,goal,weeks,freq,currentWeek:1,days});
       setLoading(false);setGenerated(true);
