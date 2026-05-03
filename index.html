@@ -9,7 +9,8 @@
   <title>Iron Adaptive Coach</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{background:#080809;min-height:100vh}
+    body{background:#080809;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Roboto,sans-serif}
+    button,input,textarea,select{font-family:inherit;}
     #root{min-height:100vh}
     #loading{position:fixed;inset:0;background:#080809;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;font-family:'SF Mono',monospace;transition:opacity .3s}
     #lm{width:52px;height:52px;background:#E8FF47;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#000;animation:lp 1.4s ease-in-out infinite}
@@ -4096,7 +4097,7 @@ function Analytics({ sessions=[], prefs={}, completedMesos=0, muscleState, muscl
           </>
         )}
         <text x={width-4} y={10} textAnchor="end" fill={trendCol} fontSize="12" fontWeight="bold">
-          {trendDir>0?"+":trendDir<0?"–":"="}
+          {trendDir>0?"↑":trendDir<0?"↓":"→"}
         </text>
       </svg>
     );
@@ -4266,7 +4267,7 @@ function Analytics({ sessions=[], prefs={}, completedMesos=0, muscleState, muscl
                       marginTop:8,padding:"8px 10px",background:T.bgRaise,borderRadius:8}}>
                       <div style={{fontSize:11,color:T.textSec}}>First: <span style={{fontFamily:"'SF Mono','Menlo',monospace",color:T.textPri}}>{first}</span></div>
                       <div style={{fontSize:11,color:dir>0?T.success:dir<0?T.red:T.textSec,fontWeight:700}}>
-                        {dir>0?"+":dir<0?"–":"="} {Math.abs(pct)}%
+                        {dir>0?"↑":dir<0?"↓":"→"} {Math.abs(pct)}%
                       </div>
                       <div style={{fontSize:11,color:T.accent}}>Latest: <span style={{fontFamily:"'SF Mono','Menlo',monospace",fontWeight:700}}>{last}</span></div>
                     </div>
@@ -5440,6 +5441,7 @@ function AdaptationPanel({ sessions=[], program, muscleState, muscleFatigue={}, 
   // cardDecisions: { [index]: "kept" | "rejected" } — undecided = undefined
   // Coach notes — read from shared DB using athlete's clientId
   const [coachNotes,     setCoachNotes]    = useState(user?.coachNotes||[]);
+  const [showAllNotes,   setShowAllNotes]  = useState(false);
   const [readNoteIds,    setReadNoteIds]   = useState(()=>{
     try{ return JSON.parse(localStorage.getItem("ironcoach_readnotes")||"[]"); }
     catch(e){ return []; }
@@ -5617,35 +5619,85 @@ function AdaptationPanel({ sessions=[], program, muscleState, muscleFatigue={}, 
                 </button>
               )}
             </div>
-            {coachNotes.slice().reverse().map((note,i)=>{
-              const isUnread=!readNoteIds.includes(note.ts);
-              const date=new Date(note.ts).toLocaleDateString("en-GB",{
-                day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
-              return(
-                <div key={note.ts} onClick={()=>isUnread&&markRead(note.ts)}
-                  style={{background:isUnread?`${T.teal}12`:T.bgCard,
-                    border:`1px solid ${isUnread?T.teal+"50":T.border}`,
-                    borderLeft:`3px solid ${isUnread?T.teal:T.border}`,
-                    borderRadius:12,padding:"11px 13px",marginBottom:7,
-                    cursor:isUnread?"pointer":"default"}}>
-                  <div style={{display:"flex",justifyContent:"space-between",
-                    alignItems:"flex-start",marginBottom:6}}>
-                    <span style={{fontSize:11,fontWeight:700,
-                      color:isUnread?T.teal:T.textSec}}>
-                      {note.coachName||"Your coach"}
-                    </span>
-                    <div style={{display:"flex",alignItems:"center",gap:6}}>
-                      {isUnread&&<div style={{width:6,height:6,borderRadius:"50%",
-                        background:T.teal,flexShrink:0}}/>}
-                      <span style={{fontSize:10,color:T.textTer}}>{date}</span>
+            {(()=>{
+              const sorted = coachNotes.slice().reverse(); // newest first
+              const thirtyDaysAgo = Date.now() - 30*24*60*60*1000;
+              const recent = sorted.filter(n=>(n.ts||0) >= thirtyDaysAgo);
+              const older  = sorted.filter(n=>(n.ts||0) <  thirtyDaysAgo);
+              // Always show newest 3 recent; rest behind "show more"
+              const SHOW = 3;
+              const visibleRecent  = showAllNotes ? recent : recent.slice(0, SHOW);
+              const hiddenRecent   = recent.length - visibleRecent.length;
+              const renderNote = (note)=>{
+                const isUnread=!readNoteIds.includes(note.ts);
+                const date=new Date(note.ts).toLocaleDateString("en-GB",{
+                  day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+                return(
+                  <div key={note.ts} onClick={()=>isUnread&&markRead(note.ts)}
+                    style={{background:isUnread?`${T.teal}12`:T.bgCard,
+                      border:`1px solid ${isUnread?T.teal+"50":T.border}`,
+                      borderLeft:`3px solid ${isUnread?T.teal:T.border}`,
+                      borderRadius:12,padding:"11px 13px",marginBottom:7,
+                      cursor:isUnread?"pointer":"default"}}>
+                    <div style={{display:"flex",justifyContent:"space-between",
+                      alignItems:"flex-start",marginBottom:6}}>
+                      <span style={{fontSize:11,fontWeight:700,
+                        color:isUnread?T.teal:T.textSec}}>
+                        {note.coachName||"Your coach"}
+                      </span>
+                      <div style={{display:"flex",alignItems:"center",gap:6}}>
+                        {isUnread&&<div style={{width:6,height:6,borderRadius:"50%",
+                          background:T.teal,flexShrink:0}}/>}
+                        <span style={{fontSize:10,color:T.textTer}}>{date}</span>
+                      </div>
+                    </div>
+                    <div style={{fontSize:12,color:T.textSec,lineHeight:1.55}}>
+                      {note.text}
                     </div>
                   </div>
-                  <div style={{fontSize:12,color:T.textSec,lineHeight:1.55}}>
-                    {note.text}
-                  </div>
-                </div>
+                );
+              };
+              return(
+                <>
+                  {visibleRecent.map(renderNote)}
+                  {hiddenRecent>0&&(
+                    <button onClick={()=>setShowAllNotes(true)}
+                      style={{width:"100%",padding:"7px",marginBottom:7,
+                        background:"none",border:`1px solid ${T.border}`,
+                        borderRadius:10,color:T.textSec,fontSize:12,
+                        cursor:"pointer",fontFamily:"inherit"}}>
+                      Show {hiddenRecent} more recent message{hiddenRecent!==1?"s":""}
+                    </button>
+                  )}
+                  {showAllNotes&&older.length>0&&(
+                    <div>
+                      <div style={{fontSize:10,color:T.textTer,fontWeight:600,
+                        textTransform:"uppercase",letterSpacing:"0.08em",
+                        marginBottom:6,marginTop:4}}>Earlier</div>
+                      {older.map(renderNote)}
+                    </div>
+                  )}
+                  {!showAllNotes&&older.length>0&&(
+                    <button onClick={()=>setShowAllNotes(true)}
+                      style={{width:"100%",padding:"7px",
+                        background:"none",border:`1px solid ${T.border}`,
+                        borderRadius:10,color:T.textTer,fontSize:11,
+                        cursor:"pointer",fontFamily:"inherit"}}>
+                      {older.length} earlier message{older.length!==1?"s":""}  ↓
+                    </button>
+                  )}
+                  {showAllNotes&&(recent.length>SHOW||older.length>0)&&(
+                    <button onClick={()=>setShowAllNotes(false)}
+                      style={{width:"100%",padding:"6px",marginTop:2,
+                        background:"none",border:"none",
+                        color:T.textTer,fontSize:11,
+                        cursor:"pointer",fontFamily:"inherit"}}>
+                      Show less ↑
+                    </button>
+                  )}
+                </>
               );
-            })}
+            })()}
           </div>
         )}
 
@@ -5723,61 +5775,109 @@ function AdaptationPanel({ sessions=[], program, muscleState, muscleFatigue={}, 
             )}
           </div>
 
-          {coachNotes.slice().reverse().map((note, i)=>{
-            const isUnread = !readNoteIds.includes(note.ts);
-            const date = new Date(note.ts).toLocaleDateString("en-GB",{
-              day:"numeric", month:"short",
-              hour:"2-digit", minute:"2-digit",
-            });
-            return(
-              <div key={note.ts} onClick={()=>isUnread&&markRead(note.ts)}
-                style={{
-                  background: isUnread ? `${T.teal}12` : T.bgCard,
-                  border: `1px solid ${isUnread ? T.teal+"50" : T.border}`,
-                  borderLeft: `3px solid ${isUnread ? T.teal : T.border}`,
-                  borderRadius: 12,
-                  padding: "11px 13px",
-                  marginBottom: 7,
-                  cursor: isUnread ? "pointer" : "default",
-                  transition: "all 0.2s ease",
-                  animation: `diffCardIn 0.4s cubic-bezier(0.22,1,0.36,1) ${i*40}ms both`,
-                }}>
-                <div style={{display:"flex",justifyContent:"space-between",
-                  alignItems:"flex-start",marginBottom:6}}>
-                  <div style={{display:"flex",alignItems:"center",gap:6}}>
-                    {/* Coach avatar */}
-                    <div style={{
-                      width:24,height:24,borderRadius:8,
-                      background:`linear-gradient(135deg,${T.teal}40,${T.accent}30)`,
-                      display:"flex",alignItems:"center",justifyContent:"center",
-                      fontSize:10,fontWeight:800,color:T.teal,flexShrink:0,
+          {(()=>{
+              const sorted = coachNotes.slice().reverse();
+              const thirtyDaysAgo = Date.now() - 30*24*60*60*1000;
+              const recent = sorted.filter(n=>(n.ts||0) >= thirtyDaysAgo);
+              const older  = sorted.filter(n=>(n.ts||0) <  thirtyDaysAgo);
+              const SHOW = 3;
+              const visibleRecent = showAllNotes ? recent : recent.slice(0, SHOW);
+              const hiddenRecent  = recent.length - visibleRecent.length;
+              const renderNote = (note,i)=>{
+                const isUnread = !readNoteIds.includes(note.ts);
+                const date = new Date(note.ts).toLocaleDateString("en-GB",{
+                  day:"numeric", month:"short",
+                  hour:"2-digit", minute:"2-digit",
+                });
+                return(
+                  <div key={note.ts} onClick={()=>isUnread&&markRead(note.ts)}
+                    style={{
+                      background: isUnread ? `${T.teal}12` : T.bgCard,
+                      border: `1px solid ${isUnread ? T.teal+"50" : T.border}`,
+                      borderLeft: `3px solid ${isUnread ? T.teal : T.border}`,
+                      borderRadius: 12,
+                      padding: "11px 13px",
+                      marginBottom: 7,
+                      cursor: isUnread ? "pointer" : "default",
+                      transition: "all 0.2s ease",
+                      animation: `diffCardIn 0.4s cubic-bezier(0.22,1,0.36,1) ${i*40}ms both`,
                     }}>
-                      {(note.coachName||"C").charAt(0).toUpperCase()}
+                    <div style={{display:"flex",justifyContent:"space-between",
+                      alignItems:"flex-start",marginBottom:6}}>
+                      <div style={{display:"flex",alignItems:"center",gap:6}}>
+                        <div style={{
+                          width:24,height:24,borderRadius:8,
+                          background:`linear-gradient(135deg,${T.teal}40,${T.accent}30)`,
+                          display:"flex",alignItems:"center",justifyContent:"center",
+                          fontSize:10,fontWeight:800,color:T.teal,flexShrink:0,
+                        }}>
+                          {(note.coachName||"C").charAt(0).toUpperCase()}
+                        </div>
+                        <span style={{fontSize:11,fontWeight:700,
+                          color: isUnread ? T.teal : T.textSec}}>
+                          {note.coachName||"Your coach"}
+                        </span>
+                      </div>
+                      <div style={{display:"flex",alignItems:"center",gap:6}}>
+                        {isUnread&&(
+                          <div style={{width:6,height:6,borderRadius:"50%",
+                            background:T.teal,flexShrink:0}}/>
+                        )}
+                        <span style={{fontSize:10,color:T.textTer}}>{date}</span>
+                      </div>
                     </div>
-                    <span style={{fontSize:11,fontWeight:700,
-                      color: isUnread ? T.teal : T.textSec}}>
-                      {note.coachName||"Your coach"}
-                    </span>
-                  </div>
-                  <div style={{display:"flex",alignItems:"center",gap:6}}>
+                    <div style={{fontSize:12,color:T.textSec,lineHeight:1.55}}>
+                      {note.text}
+                    </div>
                     {isUnread&&(
-                      <div style={{width:6,height:6,borderRadius:"50%",
-                        background:T.teal,flexShrink:0}}/>
+                      <div style={{fontSize:10,color:T.teal,marginTop:6,opacity:0.7}}>
+                        Tap to mark as read
+                      </div>
                     )}
-                    <span style={{fontSize:10,color:T.textTer}}>{date}</span>
                   </div>
-                </div>
-                <div style={{fontSize:12,color:T.textSec,lineHeight:1.55}}>
-                  {note.text}
-                </div>
-                {isUnread&&(
-                  <div style={{fontSize:10,color:T.teal,marginTop:6,opacity:0.7}}>
-                    Tap to mark as read
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                );
+              };
+              return(
+                <>
+                  {visibleRecent.map((n,i)=>renderNote(n,i))}
+                  {hiddenRecent>0&&(
+                    <button onClick={()=>setShowAllNotes(true)}
+                      style={{width:"100%",padding:"7px",marginBottom:7,
+                        background:"none",border:`1px solid ${T.border}`,
+                        borderRadius:10,color:T.textSec,fontSize:12,
+                        cursor:"pointer",fontFamily:"inherit"}}>
+                      Show {hiddenRecent} more recent message{hiddenRecent!==1?"s":""}
+                    </button>
+                  )}
+                  {showAllNotes&&older.length>0&&(
+                    <div>
+                      <div style={{fontSize:10,color:T.textTer,fontWeight:600,
+                        textTransform:"uppercase",letterSpacing:"0.08em",
+                        marginBottom:6,marginTop:4}}>Earlier</div>
+                      {older.map((n,i)=>renderNote(n,i))}
+                    </div>
+                  )}
+                  {!showAllNotes&&older.length>0&&(
+                    <button onClick={()=>setShowAllNotes(true)}
+                      style={{width:"100%",padding:"7px",
+                        background:"none",border:`1px solid ${T.border}`,
+                        borderRadius:10,color:T.textTer,fontSize:11,
+                        cursor:"pointer",fontFamily:"inherit"}}>
+                      {older.length} earlier message{older.length!==1?"s":""} ↓
+                    </button>
+                  )}
+                  {showAllNotes&&(recent.length>SHOW||older.length>0)&&(
+                    <button onClick={()=>setShowAllNotes(false)}
+                      style={{width:"100%",padding:"6px",marginTop:2,
+                        background:"none",border:"none",
+                        color:T.textTer,fontSize:11,
+                        cursor:"pointer",fontFamily:"inherit"}}>
+                      Show less ↑
+                    </button>
+                  )}
+                </>
+              );
+            })()}
         </div>
       )}
 
@@ -7136,7 +7236,7 @@ function CoachClientDetail({ client, onBack, onSendNote, coachNotes=[], appliedS
               </div>
               <div style={{display:"flex",gap:10,alignItems:"center"}}>
                 <span style={{fontSize:10,color:T.textTer,fontFamily:"'SF Mono','Menlo',monospace"}}>
-                  F:{sig.fatigue}% S:{sig.stimulus}
+                  Fatigue {sig.fatigue}% · Stim {sig.stimulus}
                 </span>
                 <span style={{fontSize:11,color:sig.trend>0?T.success:sig.trend<0?T.red:T.textTer,fontWeight:700}}>
                   {sig.trend>0?"↑":sig.trend<0?"↓":"→"}
@@ -8596,7 +8696,7 @@ function CoachTour({ tipIdx, onSetIdx, onDismiss }){
         <div style={{display:"flex",alignItems:"center",gap:7}}>
           <span style={{fontSize:15,color:T.teal}}>{tip.icon}</span>
           <span style={{fontSize:10,fontWeight:700,color:T.teal,textTransform:"uppercase",
-            letterSpacing:"0.1em",fontFamily:"'SF Mono','Menlo',monospace"}}>
+            letterSpacing:"0.1em"}}>
             Quick start · {tipIdx+1}/{COACH_TIPS.length}
           </span>
         </div>
