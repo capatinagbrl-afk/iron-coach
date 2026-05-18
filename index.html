@@ -2175,12 +2175,10 @@ function Dashboard({ onNavigate, user, program, sessions=[], currentDayIdx=0, pr
       currentWeek: 1,
       currentDay:  0,
       _id:         pendingCoachProgram._id,
-      _blockStart: new Date().toISOString(), // mark when this block started
+      _blockStart: new Date().toISOString(),
+      _resetBlock: true, // signal to App to reset week/day counters
     });
-    // Partial reset: start fresh on week/day but keep body data
-    setCurrentDayIdx(0);
-    setCompletedMesos(0);
-    // Sessions, muscleFatigue, muscleState are intentionally kept
+    // Sessions, muscleFatigue, muscleState intentionally kept
     setPendingCoachProgram(null);
     setAcceptingProgram(false);
   }
@@ -10855,7 +10853,11 @@ function App(){
   const screens={
     dashboard: <Dashboard onNavigate={setScreen} user={user} program={program} sessions={sessions} currentDayIdx={currentDayIdx} prefs={prefs} onPrefsChange={setPrefs} onProgramReady={async p=>{
         setProgram(p);
-        setCurrentDayIdx(0);
+        setCurrentDayIdx(p.currentDay || 0);
+        // If this is a coach block transition, reset counters but keep body data
+        if(p._resetBlock){
+          setCompletedMesos(0);
+        }
         if(userRef.current?.id){
           const currentUser = userRef.current;
           // Find existing self-created program (not a coach-assigned one)
