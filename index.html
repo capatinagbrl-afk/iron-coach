@@ -2133,13 +2133,45 @@ function Dashboard({ onNavigate, user, program, sessions=[], currentDayIdx=0, pr
     if(!pendingCoachProgram) return;
     setAcceptingProgram(true);
     await acceptCoachProgram(pendingCoachProgram._id);
-    // Activate the program in the app
+
+    // Enrich days with exercises if they don't have any
+    // Coach templates only store {day, focus, muscles?} — no exercises
+    const FOCUS_TO_MUSCLES = {
+      push:       ["chest","shoulders"],
+      pull:       ["back","arms"],
+      legs:       ["legs"],
+      upper:      ["chest","back"],
+      lower:      ["legs"],
+      chest:      ["chest"],
+      back:       ["back"],
+      shoulders:  ["shoulders"],
+      arms:       ["arms"],
+      full:       ["chest","back","legs"],
+      "full body":["chest","back","legs"],
+      push_pull:  ["chest","back"],
+    };
+    const goal = pendingCoachProgram.goal || "Hypertrophy";
+    const tag  = goal === "Strength" || goal === "Peak" ? "S" : "H";
+    const exp  = user?.exp || "Intermediate";
+    const splitType = prefs?.splitType || "2-major";
+
+    const enrichedDays = (Array.isArray(pendingCoachProgram.days) ? pendingCoachProgram.days : []).map(day=>{
+      // If day already has exercises, keep them
+      if(Array.isArray(day.exercises) && day.exercises.length > 0) return day;
+      // Derive muscles from day.muscles or day.focus
+      const muscles = day.muscles && day.muscles.length > 0
+        ? day.muscles
+        : FOCUS_TO_MUSCLES[day.focus?.toLowerCase()] || ["chest","back"];
+      const exercises = pickExercisesForDay(muscles, tag, splitType, exp);
+      return { ...day, muscles, tag, exercises };
+    });
+
     onProgramReady({
       name:        pendingCoachProgram.name,
       goal:        pendingCoachProgram.goal,
       weeks:       pendingCoachProgram.weeks || 8,
       freq:        pendingCoachProgram.freq  || 4,
-      days:        Array.isArray(pendingCoachProgram.days) ? pendingCoachProgram.days : [],
+      days:        enrichedDays,
       currentWeek: 1,
       _id:         pendingCoachProgram._id,
     });
@@ -2914,8 +2946,8 @@ function WorkoutScreen({ onNavigate, program, onSessionComplete, currentDayIdx=0
             <div style={{fontSize:11,color:T.teal,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:6}}>Up next</div>
             <div style={{fontSize:15,fontWeight:700,marginBottom:4}}>{nextDay.focus}</div>
             <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
-              {nextDay.exercises.slice(0,3).map(ex=><div key={ex.id} style={{background:T.bgRaise,borderRadius:8,padding:"2px 7px",fontSize:10,color:T.textSec}}>{ex.name}</div>)}
-              {nextDay.exercises.length>3&&<div style={{background:T.bgRaise,borderRadius:8,padding:"2px 7px",fontSize:10,color:T.textTer}}>+{nextDay.exercises.length-3}</div>}
+              {(nextDay.exercises||[]).slice(0,3).map(ex=><div key={ex.id} style={{background:T.bgRaise,borderRadius:8,padding:"2px 7px",fontSize:10,color:T.textSec}}>{ex.name}</div>)}
+              {(nextDay.exercises||[]).length>3&&<div style={{background:T.bgRaise,borderRadius:8,padding:"2px 7px",fontSize:10,color:T.textTer}}>+{(nextDay.exercises||[]).length-3}</div>}
             </div>
           </Card>
         )}
@@ -10543,23 +10575,6 @@ function loadState(){
   }catch(e){ return null; }
 }
 
-class ErrorBoundary extends React.Component {
-  constructor(props){ super(props); this.state={error:null}; }
-  static getDerivedStateFromError(e){ return {error:e}; }
-  componentDidCatch(e,info){ console.error("App crash:", e, info); }
-  render(){
-    if(this.state.error){
-      return React.createElement('div',{style:{padding:20,color:"#fff",background:"#1a1a2e",minHeight:"100vh",fontFamily:"monospace"}},
-        React.createElement('div',{style:{fontSize:18,color:"#E8FF47",marginBottom:12}},"App Error — Debug Info"),
-        React.createElement('pre',{style:{fontSize:12,color:"#ff6b6b",whiteSpace:"pre-wrap",wordBreak:"break-all"}},
-          this.state.error?.message + "\n\n" + this.state.error?.stack
-        )
-      );
-    }
-    return this.props.children;
-  }
-}
-
 function App(){
   // Hide loading screen after React mounts — prevents black screen on slow Babel compile
   React.useEffect(()=>{
@@ -10951,7 +10966,7 @@ function App(){
 
 
 // Mount the app
-ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(ErrorBoundary,null,React.createElement(App)));</script>
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));</script>
 
   <script>
     // Loading screen is hidden by the App component after React mounts
