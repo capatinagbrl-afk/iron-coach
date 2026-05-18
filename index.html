@@ -2102,13 +2102,13 @@ function SetupWizard({ user, prefs, onPrefsChange, onProgramReady }){
 function Dashboard({ onNavigate, user, program, sessions=[], currentDayIdx=0, prefs, onPrefsChange, onProgramReady, showOnboarding, onboardStep, onNextOnboard, onSkipOnboard, muscleFatigue={}, lastFatigueTs=null }){
   const today=new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"});
   const todayDay=program?.days?.[currentDayIdx];
-  const nextDayIdx=program?((currentDayIdx+1)%program.days.length):null;
+  const nextDayIdx=program?.days?.length?((currentDayIdx+1)%program?.days?.length):null;
   const nextDay=program?.days?.[nextDayIdx];
   const hasData=sessions.length>0;
   const totalSets=sessions.reduce((a,s)=>a+(s.loggedSets?.length||0),0);
   const lastSession=sessions[sessions.length-1];
   const avgPump=lastSession?.loggedSets?.length
-    ?lastSession.loggedSets.reduce((a,s)=>a+(s.pump||3),0)/lastSession.loggedSets.length
+    ?(lastSession.loggedSets||[]).reduce((a,s)=>a+(s.pump||3),0)/((lastSession.loggedSets||[]).length||1)
     :null;
   const fatigueLabel=avgPump===null?"—":avgPump>=4?"High":avgPump>=3?"Moderate":"Low";
   const pumpFatigueColor=avgPump===null?T.textTer:avgPump>=4?T.orange:avgPump>=3?T.warning:T.success;
@@ -2137,9 +2137,9 @@ function Dashboard({ onNavigate, user, program, sessions=[], currentDayIdx=0, pr
     onProgramReady({
       name:        pendingCoachProgram.name,
       goal:        pendingCoachProgram.goal,
-      weeks:       pendingCoachProgram.weeks,
-      freq:        pendingCoachProgram.freq,
-      days:        pendingCoachProgram.days,
+      weeks:       pendingCoachProgram.weeks || 8,
+      freq:        pendingCoachProgram.freq  || 4,
+      days:        Array.isArray(pendingCoachProgram.days) ? pendingCoachProgram.days : [],
       currentWeek: 1,
       _id:         pendingCoachProgram._id,
     });
@@ -2272,13 +2272,13 @@ function Dashboard({ onNavigate, user, program, sessions=[], currentDayIdx=0, pr
       {program&&(
         <Card style={{marginBottom:12}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-            <div style={{fontSize:13,fontWeight:600}}>{program.name}</div>
-            <Badge color={T.purple}>{program.goal}</Badge>
+            <div style={{fontSize:13,fontWeight:600}}>{program?.name}</div>
+            <Badge color={T.purple}>{program?.goal}</Badge>
           </div>
-          <ProgressBar value={program.currentWeek} max={program.weeks}/>
+          <ProgressBar value={program?.currentWeek||1} max={program?.weeks||8}/>
           <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
-            <div style={{fontSize:11,color:T.textSec}}>Week {program.currentWeek}</div>
-            <div style={{fontSize:11,color:T.textSec}}>{program.weeks} weeks total</div>
+            <div style={{fontSize:11,color:T.textSec}}>Week {program?.currentWeek||1}</div>
+            <div style={{fontSize:11,color:T.textSec}}>{program?.weeks||8} weeks total</div>
           </div>
         </Card>
       )}
@@ -2290,7 +2290,7 @@ function Dashboard({ onNavigate, user, program, sessions=[], currentDayIdx=0, pr
             <div>
               <div style={{fontSize:10,color:T.textTer,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>Up next</div>
               <div style={{fontSize:15,fontWeight:700}}>{nextDay.focus}</div>
-              <div style={{fontSize:11,color:T.textSec,marginTop:2}}>{nextDay.exercises.length} exercises</div>
+              <div style={{fontSize:11,color:T.textSec,marginTop:2}}>{nextDay.exercises?.length||0} exercises</div>
             </div>
             <div style={{color:T.textTer,fontSize:18}}>›</div>
           </div>
@@ -2485,7 +2485,7 @@ function Dashboard({ onNavigate, user, program, sessions=[], currentDayIdx=0, pr
                 pump:avgPump||0,
                 soreness:lastSession?.soreness||2,
                 rir:lastSession?.loggedSets?.length
-                  ? lastSession.loggedSets.reduce((a,s)=>a+s.rir,0)/lastSession.loggedSets.length
+                  ? (lastSession.loggedSets||[]).reduce((a,s)=>a+s.rir,0)/((lastSession.loggedSets||[]).length||1)
                   : 2,
                 sessions,
               });
@@ -2546,7 +2546,7 @@ function Dashboard({ onNavigate, user, program, sessions=[], currentDayIdx=0, pr
 function WorkoutScreen({ onNavigate, program, onSessionComplete, currentDayIdx=0, prefs={} }){
   const units=prefs.units||"kg";
   const todayDay=program?.days?.[currentDayIdx];
-  const nextDayIdx=program?((currentDayIdx+1)%program.days.length):null;
+  const nextDayIdx=program?((currentDayIdx+1)%program?.days?.length):null;
   const nextDay=program?.days?.[nextDayIdx];
 
   const [exercises,setExercises]=useState(()=>todayDay?.exercises||[]);
@@ -7503,7 +7503,7 @@ function CoachClientDetail({ client, onBack, onSendNote, coachNotes=[], appliedS
                 <div style={{fontSize:11,color:T.textSec}}>{program.weeks} weeks</div>
               </div>
               {program.days?.map((day,i)=>(
-                <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:i<program.days.length-1?`1px solid ${T.border}`:"none"}}>
+                <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:i<program?.days?.length-1?`1px solid ${T.border}`:"none"}}>
                   <div style={{fontSize:12,fontWeight:600}}>{day.day}</div>
                   <div style={{fontSize:12,color:T.textSec}}>{day.focus}</div>
                 </div>
@@ -9869,7 +9869,7 @@ async function assignProgramToAthlete(coachId, athleteClientId, template){
     freq:              template.freq  || 4,
     current_week:      1,
     current_day:       0,
-    days:              template.split || [],
+    days:              template.split || template.days || [],
     is_template:       false,
     assigned_by_coach: coachId,
     coach_assigned_at: new Date().toISOString(),
@@ -9906,7 +9906,7 @@ async function checkCoachAssignedProgram(athleteId){
     goal:        data.goal,
     weeks:       data.weeks,
     freq:        data.freq,
-    days:        data.days || [],
+    days:        Array.isArray(data.days) ? data.days : [],
     currentWeek: data.current_week || 1,
     _id:         data.id,
     coachName:   coach?.name || "Your coach",
@@ -10543,6 +10543,23 @@ function loadState(){
   }catch(e){ return null; }
 }
 
+class ErrorBoundary extends React.Component {
+  constructor(props){ super(props); this.state={error:null}; }
+  static getDerivedStateFromError(e){ return {error:e}; }
+  componentDidCatch(e,info){ console.error("App crash:", e, info); }
+  render(){
+    if(this.state.error){
+      return React.createElement('div',{style:{padding:20,color:"#fff",background:"#1a1a2e",minHeight:"100vh",fontFamily:"monospace"}},
+        React.createElement('div',{style:{fontSize:18,color:"#E8FF47",marginBottom:12}},"App Error — Debug Info"),
+        React.createElement('pre',{style:{fontSize:12,color:"#ff6b6b",whiteSpace:"pre-wrap",wordBreak:"break-all"}},
+          this.state.error?.message + "\n\n" + this.state.error?.stack
+        )
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function App(){
   // Hide loading screen after React mounts — prevents black screen on slow Babel compile
   React.useEffect(()=>{
@@ -10620,7 +10637,7 @@ function App(){
   // ── currentWeek advancement ──
   function advanceDayAndWeek(){
     if(!program) return;
-    const nextIdx=(currentDayIdx+1)%program.days.length;
+    const nextIdx=(currentDayIdx+1)%program?.days?.length;
     const completedCycle = nextIdx===0;
     setCurrentDayIdx(nextIdx);
     if(completedCycle){
@@ -10934,7 +10951,7 @@ function App(){
 
 
 // Mount the app
-ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));</script>
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(ErrorBoundary,null,React.createElement(App)));</script>
 
   <script>
     // Loading screen is hidden by the App component after React mounts
