@@ -5,21 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="theme-color" content="#080809"/>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23E8FF47'/><text x='16' y='22' font-size='14' font-weight='900' text-anchor='middle' fill='%23000' font-family='monospace'>IC</text></svg>"/>
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23E8FF47'/><polygon points='90,22 150,56 150,124 90,158 30,124 30,56' fill='%23111'/><path d='M101 36 L70 93 L90 93 L76 143 L115 82 L93 82 Z' fill='%23E8FF47'/></svg>"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23E8FF47'/><polygon points='16,4 27,10 27,22 16,28 5,22 5,10' fill='%23111'/><path d='M18 7 L12 17 L16 17 L13 25 L20 15 L16 15 Z' fill='%23E8FF47'/></svg>"/><rect width='32' height='32' rx='8' fill='%23E8FF47'/><text x='16' y='22' font-size='14' font-weight='900' text-anchor='middle' fill='%23000' font-family='monospace'>IC</text></svg>"/>
   <title>Iron Adaptive Coach</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     body{background:#080809;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Roboto,sans-serif}
     button,input,textarea,select{font-family:inherit;}
     #root{min-height:100vh}
-    #loading{position:fixed;inset:0;background:#080809;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;font-family:'SF Mono',monospace;transition:opacity .3s}
-    #lm{width:52px;height:52px;background:#E8FF47;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#000;animation:lp 1.4s ease-in-out infinite}
+    #loading{position:fixed;inset:0;background:#080809;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;transition:opacity .3s}
+    #lm{width:64px;height:64px;animation:lp 1.4s ease-in-out infinite}
     #loading p{font-size:11px;color:#6A6A7A;letter-spacing:.1em;text-transform:uppercase}
     @keyframes lp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.92);opacity:.7}}
   </style>
 </head>
 <body>
-  <div id="loading"><div id="lm">I·C</div><p>Loading Iron Coach…</p></div>
+  <div id="loading">
+    <div id="lm">
+      <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="14" fill="#E8FF47"/>
+        <polygon points="32,8 54,20 54,44 32,56 10,44 10,20" fill="#111111"/>
+        <path d="M36 13 L25 33 L32 33 L27 51 L41 29 L33 29 Z" fill="#E8FF47"/>
+      </svg>
+    </div>
+    <p>Loading Iron Coach…</p>
+  </div>
   <div id="root"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
