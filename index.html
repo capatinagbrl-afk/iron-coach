@@ -287,7 +287,9 @@ html,body{margin:0;padding:0;width:100%;min-height:100vh;}
     height:100dvh!important;
     max-height:100dvh!important;
     overflow:hidden!important;
+    padding-top: env(safe-area-inset-top, 0px)!important;
   }
+
   /* Main scroll area fills all space above fixed nav */
   .pf-screen main {
     padding-bottom:88px!important;
@@ -9429,7 +9431,7 @@ function CoachApp({ coach, onLogout, onDeleteAccount, theme="dark", prefs={}, on
           </div>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
             {selectedClient&&(
-              <button aria-label="Back to clients" onClick={()=>setSelectedClient(null)} style={{background:"none",border:"none",color:T.textSec,cursor:"pointer",fontSize:13,padding:"4px 8px",minHeight:44,display:"flex",alignItems:"center"}}>← Back</button>
+              <button aria-label="Back to clients" onClick={()=>setSelectedClient(null)} style={{background:`${T.bgRaise}`,border:`1px solid ${T.border}`,color:T.textPri,cursor:"pointer",fontSize:13,padding:"5px 12px",borderRadius:8,minHeight:44,display:"flex",alignItems:"center"}}>← Back</button>
             )}
             {/* Coach badge — navigates to profile, shows personalised name */}
             <button
@@ -10956,7 +10958,7 @@ function App(){
           <nav aria-label="Utility navigation" style={{display:"flex",gap:6,alignItems:"center"}}>
             {(screen==="profile"||screen==="analytics")&&(
               <button aria-label="Back to dashboard" onClick={()=>setScreen("dashboard")}
-                style={{background:"none",border:"none",color:T.textSec,cursor:"pointer",fontSize:13,padding:"4px 8px",minHeight:44,display:"flex",alignItems:"center"}}>
+                style={{background:`${T.bgRaise}`,border:`1px solid ${T.border}`,color:T.textPri,cursor:"pointer",fontSize:13,padding:"5px 12px",borderRadius:8,minHeight:44,display:"flex",alignItems:"center"}}>
                 ← Back
               </button>
             )}
