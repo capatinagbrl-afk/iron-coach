@@ -2327,12 +2327,32 @@ function Dashboard({ onNavigate, user, program, sessions=[], currentDayIdx=0, pr
         </Card>
       )}
 
+      {/* Today's workout — always shown when program exists */}
+      {todayDay&&(
+        <Card style={{marginBottom:12,border:`1px solid ${T.accent}40`,background:`${T.accent}06`}}
+          onClick={()=>onNavigate("workout")}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <div>
+              <div style={{fontSize:10,color:T.accent,textTransform:"uppercase",
+                letterSpacing:"0.08em",marginBottom:4,fontWeight:700}}>
+                Today's workout · Day {(currentDayIdx%(program?.days?.length||1))+1} of {program?.days?.length||1}
+              </div>
+              <div style={{fontSize:15,fontWeight:700}}>{todayDay.focus}</div>
+              <div style={{fontSize:11,color:T.textSec,marginTop:2}}>
+                {todayDay.exercises?.length||0} exercises · Train when ready
+              </div>
+            </div>
+            <div style={{fontSize:22,color:T.accent,fontWeight:700}}>›</div>
+          </div>
+        </Card>
+      )}
+
       {/* Up next */}
       {nextDay&&sessions.length>0&&(
         <Card style={{marginBottom:12,border:`1px solid ${T.border}`}} onClick={()=>onNavigate("workout")}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <div>
-              <div style={{fontSize:10,color:T.textTer,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>Up next</div>
+              <div style={{fontSize:10,color:T.textTer,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>Up next — Day {(currentDayIdx+1)%(program?.days?.length||1)+1} of {program?.days?.length||1}</div>
               <div style={{fontSize:15,fontWeight:700}}>{nextDay.focus}</div>
               <div style={{fontSize:11,color:T.textSec,marginTop:2}}>{nextDay.exercises?.length||0} exercises</div>
             </div>
@@ -3064,7 +3084,7 @@ function WorkoutScreen({ onNavigate, program, onSessionComplete, currentDayIdx=0
       {/* Header with pause */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:T.sp3}}>
         <div>
-          <div style={{fontSize:11,color:T.textTer,fontFamily:"'SF Mono','Menlo',monospace",letterSpacing:"0.06em"}}>{(todayDay?.focus||"CUSTOM").toUpperCase()} · WEEK {program?.currentWeek||1}</div>
+          <div style={{fontSize:11,color:T.textTer,fontFamily:"'SF Mono','Menlo',monospace",letterSpacing:"0.06em"}}>{(todayDay?.focus||"CUSTOM").toUpperCase()} · WK {program?.currentWeek||1} · DAY {(currentDayIdx%(program?.days?.length||1))+1}/{program?.days?.length||1}</div>
           <div style={{fontSize:T.tsLg,fontWeight:700,marginTop:2}}>Live session</div>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:T.sp2}}>
