@@ -1195,28 +1195,16 @@ function fmtW(kg, units="kg"){
 
 // ─── IAC Logo mark — SVG monogram with barbell A ─────────────
 function IACMark({ size=27, variant="athlete" }){
-  // variant: "athlete" (accent fill #E8FF47 bg), "coach" (teal bg), "dark" (dark bg accent mark)
-  const bg = variant==="athlete" ? T.accent : variant==="coach" ? T.teal : T.bgCard;
-  const fg = variant==="dark" ? T.accent : "#0A0A0B";
-  const r  = size*0.22;
+  // variant: "athlete"=lime bg+dark bolt, "coach"=teal bg+dark bolt, "dark"=dark bg+lime bolt
+  const hexFill  = variant==="dark"    ? T.bgCard  : variant==="coach" ? T.teal   : T.accent;
+  const innerHex = variant==="dark"    ? "#111111"  : "#111111";
+  const boltFill = variant==="dark"    ? T.accent   : variant==="coach" ? "#111111" : "#111111";
+  const r = size * 0.22;
   return(
-    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width={size} height={size} style={{flexShrink:0}}>
-      <rect width="120" height="120" rx={r*4} fill={bg}/>
-      {/* I */}
-      <rect x="14" y="36" width="8" height="48" rx="2.5" fill={fg}/>
-      {/* A barbell caps */}
-      <rect x="36" y="34" width="6" height="12" rx="2" fill={fg}/>
-      <rect x="78" y="34" width="6" height="12" rx="2" fill={fg}/>
-      {/* A barbell shaft */}
-      <rect x="41" y="38.5" width="38" height="3" rx="1.5" fill={fg} opacity="0.45"/>
-      {/* A left leg */}
-      <line x1="44" y1="84" x2="60" y2="44" stroke={fg} strokeWidth="7" strokeLinecap="round"/>
-      {/* A right leg */}
-      <line x1="76" y1="84" x2="60" y2="44" stroke={fg} strokeWidth="7" strokeLinecap="round"/>
-      {/* A crossbar */}
-      <rect x="50" y="68" width="20" height="3.5" rx="1.75" fill={fg}/>
-      {/* C arc */}
-      <path d="M106 46 A20 20 0 1 0 106 74" fill="none" stroke={fg} strokeWidth="7.5" strokeLinecap="round"/>
+    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width={size} height={size}>
+      <rect width="64" height="64" rx={r*4} fill={hexFill}/>
+      <polygon points="32,8 54,20 54,44 32,56 10,44 10,20" fill={innerHex}/>
+      <path d="M36 13 L25 33 L32 33 L27 51 L41 29 L33 29 Z" fill={boltFill}/>
     </svg>
   );
 }
